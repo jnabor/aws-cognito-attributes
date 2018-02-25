@@ -93,7 +93,19 @@ export default {
   methods: {
     getAttributes: function () {
       console.log('getting attributes from server...')
-      console.log(this.usermodel.firstName)
+      this.$store.state.cognitoUser.getUserAttributes((err, result) => {
+        if (err) {
+          console.log('get attribute error: ' + err)
+          return
+        }
+        for (let value of result) {
+          console.log(value)
+        }
+        this.mapAttributes()
+      })
+    },
+    mapAttributes: function () {
+      console.log('mapping attributes...')
     },
     navSignOut: function () {
       console.log('signing out')

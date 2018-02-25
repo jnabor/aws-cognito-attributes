@@ -9,7 +9,16 @@ export const store = new Vuex.Store({
     cognitoUser: '',
     username: '',
     token: '',
-    authenticated: false,
-    attributes: []
+    authenticated: false
+  },
+  mutations: {
+    signOut (state) {
+      console.log('store: signing out')
+      state.authenticated = false
+      state.token = ''
+      state.username = ''
+      state.cognitoUser = ''
+      state.userPool = []
+    }
   }
 })

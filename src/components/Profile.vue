@@ -36,10 +36,10 @@
                           v-model="userModel.lastName"
                           label="Last Name">
                         </v-text-field>
-                        <v-btn small :disabled="!enable.nameChanged" color="success">
+                        <v-btn small :disabled="!enable.nameEditButtons" @click="updateName()" color="success">
                           SAVE
                         </v-btn>
-                        <v-btn small :disabled="!enable.nameChanged" @click="cancelEdit('name')">
+                        <v-btn small :disabled="!enable.nameEditButtons" @click="cancelEdit('name')">
                           CANCEL
                         </v-btn>
                       </v-card-text>
@@ -70,24 +70,29 @@
 
 <script>
 import router from '../routes'
+var AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 
 export default {
   data: function () {
     return {
       enable: {
-        nameChanged: false
+        nameEditButtons: false
+      },
+      exist: {
+        firstName: false,
+        middleName: false,
+        lastName: false
       },
       userModel: {
-        firstName: 'First Name',
-        middleName: 'Middle Name',
-        lastName: 'Last Name'
+        firstName: '',
+        middleName: '',
+        lastName: ''
       },
       userData: {
-        firstName: 'First Name',
-        middleName: 'Middle Name',
-        lastName: 'Last Name'
-      },
-      message: 'test'
+        firstName: '',
+        middleName: '',
+        lastName: ''
+      }
     }
   },
   methods: {
@@ -98,14 +103,26 @@ export default {
           console.log('get attribute error: ' + err)
           return
         }
-        for (let value of result) {
-          console.log(value)
-        }
-        this.mapAttributes()
+        this.mapAttributes(result)
       })
     },
-    mapAttributes: function () {
+    mapAttributes: function (result) {
       console.log('mapping attributes...')
+      for (let attribute of result) {
+        if (attribute.Name === 'given_name') {
+          this.userModel.firstName = attribute.Value
+          this.userData.firstName = attribute.Value
+        }
+        if (attribute.Name === 'middle_name') {
+          this.userModel.middleName = attribute.Value
+          this.userData.middleName = attribute.Value
+        }
+        if (attribute.Name === 'family_name') {
+          this.userModel.lastName = attribute.Value
+          this.userData.lastName = attribute.Value
+        }
+        console.log('property:' + attribute.Name + ' value:' + attribute.Value)
+      }
     },
     navSignOut: function () {
       console.log('signing out')
@@ -120,7 +137,31 @@ export default {
       }
     },
     updateName: function () {
+      var attributeList = []
 
+      var attributeFirstName = { Name: 'given_name', Value: this.userModel.firstName }
+      var attributeMiddleName = { Name: 'middle_name', Value: this.userModel.middleName }
+      var attributeLastName = { Name: 'family_name', Value: this.userModel.lastName }
+
+      var firstName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeFirstName)
+      var middleName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeMiddleName)
+      var lastName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeLastName)
+
+      attributeList.push(firstName)
+      attributeList.push(middleName)
+      attributeList.push(lastName)
+
+      this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
+        if (err) {
+          console.log('error: ' + err)
+          return
+        }
+        console.log('call result: ' + result)
+        this.userData.fisrtName = this.userModel.firstName
+        this.userData.middleName = this.userModel.middleName
+        this.userData.lastName = this.userModel.lastName
+        this.enable.nameEditButtons = false
+      })
     }
   },
   computed: {
@@ -131,9 +172,9 @@ export default {
   watch: {
     fullName: function () {
       if ((this.userModel.firstName !== this.userData.firstName) || (this.userModel.middleName !== this.userData.middleName) || (this.userModel.lastName !== this.userData.lastName)) {
-        this.enable.nameChanged = true
+        this.enable.nameEditButtons = true
       } else {
-        this.enable.nameChanged = false
+        this.enable.nameEditButtons = false
       }
     }
   }

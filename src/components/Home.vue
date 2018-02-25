@@ -34,7 +34,7 @@ export default {
     },
     navSignOut: function () {
       console.log('signing out')
-      this.$store.state.authenticated = false
+      this.$store.commit('signOut')
       router.push('/home')
     }
   }

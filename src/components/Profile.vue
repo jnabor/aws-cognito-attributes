@@ -8,9 +8,6 @@
               <v-card class="elevation-0 mr-2 transparent">
                 <div class="headline mb-2">User Profile</div>
                 <div class="body-1">Manage your basic information: your name, email, and phone number, etc. Help others find you and make it easier to get in touch.</div>
-                <v-btn depressed small @click="getAttributes()" color="primary" >
-                  GET
-                </v-btn>
               </v-card>
             </v-flex>
             <v-flex xl4 lg5 md6 sm6>
@@ -36,7 +33,7 @@
                           v-model="userModel.lastName"
                           label="Last Name">
                         </v-text-field>
-                        <v-btn small :disabled="!enable.nameEditButtons" @click="updateName()" color="success">
+                        <v-btn small :disabled="!enable.nameEditButtons" @click="updateDate()" color="success">
                           SAVE
                         </v-btn>
                         <v-btn small :disabled="!enable.nameEditButtons" @click="cancelEdit('name')">
@@ -48,12 +45,23 @@
 
                   <v-expansion-panel-content ripple>
                     <div slot="header">
-                      <div class="caption">Birthdate</div>
-                      <div class="body-2">November 29, 1985</div>
+                      <div class="caption">Birthday Date</div>
+                      <div class="body-2">{{ userModel.birthDate }}</div>
                     </div>
-                    <v-card>
+                    <v-card class="pt-4 pl-2 pr-2 pb-2 grey lighten-4">
                       <v-card-text class="grey lighten-4">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        <v-date-picker
+                          full-width dark
+                          class="mb-3"
+                          v-model="userModel.birthDate"
+                          :max="new Date().toISOString().substr(0, 10)">
+                        </v-date-picker>
+                        <v-btn small :disabled="!enable.dateEditButtons" @click="updateDate()" color="success">
+                          SAVE
+                        </v-btn>
+                        <v-btn small :disabled="!enable.dateEditButtons" @click="cancelEdit('date')">
+                          CANCEL
+                        </v-btn>
                       </v-card-text>
                     </v-card>
                   </v-expansion-panel-content>
@@ -75,23 +83,23 @@ var AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 export default {
   data: function () {
     return {
+      menu: false,
+      modal: false,
       enable: {
-        nameEditButtons: false
-      },
-      exist: {
-        firstName: false,
-        middleName: false,
-        lastName: false
+        nameEditButtons: false,
+        dateEditButtons: false
       },
       userModel: {
         firstName: '',
         middleName: '',
-        lastName: ''
+        lastName: '',
+        birthDate: ''
       },
       userData: {
         firstName: '',
         middleName: '',
-        lastName: ''
+        lastName: '',
+        birthdate: ''
       }
     }
   },
@@ -121,6 +129,12 @@ export default {
           this.userModel.lastName = attribute.Value
           this.userData.lastName = attribute.Value
         }
+        if (attribute.Name === 'birthdate') {
+          this.userModel.birthDate = attribute.Value
+          this.userData.birthDate = attribute.Value
+          this.enable.dateEditButtons = false
+        }
+
         console.log('property:' + attribute.Name + ' value:' + attribute.Value)
       }
     },
@@ -134,49 +148,83 @@ export default {
         this.userModel.firstName = this.userData.firstName
         this.userModel.middleName = this.userData.middleName
         this.userModel.lastName = this.userData.lastName
+      } else if (field === 'date') {
+        this.userModel.birthDate = this.userData.birthDate
       }
     },
     updateName: function () {
+      console.log('updating name...')
       var attributeList = []
-
       var attributeFirstName = { Name: 'given_name', Value: this.userModel.firstName }
       var attributeMiddleName = { Name: 'middle_name', Value: this.userModel.middleName }
       var attributeLastName = { Name: 'family_name', Value: this.userModel.lastName }
-
       var firstName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeFirstName)
       var middleName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeMiddleName)
       var lastName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeLastName)
-
       attributeList.push(firstName)
       attributeList.push(middleName)
       attributeList.push(lastName)
-
       this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
         if (err) {
           console.log('error: ' + err)
           return
         }
         console.log('call result: ' + result)
-        this.userData.fisrtName = this.userModel.firstName
+        this.userData.firstName = this.userModel.firstName
         this.userData.middleName = this.userModel.middleName
         this.userData.lastName = this.userModel.lastName
         this.enable.nameEditButtons = false
+      })
+    },
+    updateDate: function () {
+      console.log('updating birthday date...')
+      var attributeList = []
+      var attributeBirthDate = { Name: 'birthdate', Value: this.userModel.birthDate }
+      var birthDate = new AmazonCognitoIdentity.CognitoUserAttribute(attributeBirthDate)
+      attributeList.push(birthDate)
+      this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
+        if (err) {
+          console.log('error: ' + err)
+          return
+        }
+        console.log('call result: ' + result)
+        this.userData.birthDate = this.userModel.birthDate
+        this.enable.dateEditButtons = false
       })
     }
   },
   computed: {
     fullName: function () {
       return this.userModel.firstName + ' ' + this.userModel.middleName + ' ' + this.userModel.lastName
+    },
+    birthDate: function () {
+      return this.userModel.birthDate
     }
   },
   watch: {
     fullName: function () {
+      console.log('name changed')
       if ((this.userModel.firstName !== this.userData.firstName) || (this.userModel.middleName !== this.userData.middleName) || (this.userModel.lastName !== this.userData.lastName)) {
         this.enable.nameEditButtons = true
       } else {
         this.enable.nameEditButtons = false
       }
+    },
+    birthDate: function () {
+      console.log('birthdate changed')
+      if (this.userModel.birthDate !== this.userData.birthDate) {
+        this.enable.dateEditButtons = true
+      } else {
+        this.enable.dateEditButtons = false
+      }
     }
+  },
+  mounted: function () {
+    if (this.$store.state.authenticated === true) {
+      this.getAttributes()
+    }
+    this.enable.nameEditButtons = false
+    this.enable.dateEditButtons = false
   }
 }
 </script>

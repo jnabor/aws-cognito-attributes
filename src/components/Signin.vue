@@ -80,13 +80,13 @@ export default {
       errmsg: '',
       username: '',
       valid: false,
-      email: 'sonabstudios@gmail.com',
+      email: '',
       emailRules: [
         (v) => !!v || 'E-mail is required',
         // eslint-disable-next-line
         (v) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
       ],
-      password: 'Gr@ffiti22',
+      password: '',
       passRules: [
         (v) => !!v || 'Password is required',
         (v) => v.length >= 8 || 'Password must be at least 8 characters'

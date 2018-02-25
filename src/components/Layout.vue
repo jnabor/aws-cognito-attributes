@@ -100,7 +100,6 @@ export default {
     navSignOut: function () {
       console.log('signing out')
       this.$store.commit('signOut')
-      this.$store.state.cognitoUser.signOut()
       router.push('/home')
     },
     navProfile: function () {

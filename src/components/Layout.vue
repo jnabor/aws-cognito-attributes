@@ -108,6 +108,7 @@ export default {
     }
   },
   beforeUpdate () {
+    console.log('store.username: ' + this.$store.state.username)
     var str = this.$store.state.username
     var index = str.indexOf('@')
     this.username = str.substring(0, index)

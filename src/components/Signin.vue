@@ -82,13 +82,13 @@ export default {
       errmsg: '',
       username: '',
       valid: false,
-      email: '',
+      email: 'sonabstudios@gmail.com',
       emailRules: [
         (v) => !!v || 'E-mail is required',
         // eslint-disable-next-line
         (v) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
       ],
-      password: '',
+      password: 'Gr@ffiti22',
       passRules: [
         (v) => !!v || 'Password is required',
         (v) => v.length >= 8 || 'Password must be at least 8 characters'
@@ -125,7 +125,7 @@ export default {
             console.log('sign in success with token: ' + result.getIdToken().getJwtToken())
             this.$store.state.token = result.getIdToken().getJwtToken()
             this.$store.state.authenticated = true
-            this.$store.state.email = this.email
+            this.$store.state.username = this.email
             this.username = this.email
             this[l] = false
             this.loader = null

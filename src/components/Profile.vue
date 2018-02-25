@@ -14,18 +14,51 @@
               </v-card>
             </v-flex>
             <v-flex xl4 lg5 md6 sm6>
-              <v-card>
-                <v-list two-line>
-                  <template v-for="(attribute, index) in attributes">
-                    <v-list-tile avatar ripple :key="index">
-                      <v-list-tile-content>
-                        <v-list-tile-sub-title>{{ attribute.name }}</v-list-tile-sub-title>
-                        <v-list-tile-title>{{ attribute.name }} Placeholder</v-list-tile-title>
-                      </v-list-tile-content>
-                    </v-list-tile>
-                    <v-divider v-if="index + 1 < attributes.length" :key="`divider-${index}`"></v-divider>
-                  </template>
-                </v-list>
+              <v-card class="mb-2">
+                <v-expansion-panel>
+
+                  <v-expansion-panel-content ripple>
+                    <div slot="header">
+                      <div class="caption">Name</div>
+                      <div class="body-2">{{ fullName }}</div>
+                    </div>
+                    <v-card class="pt-4 pl-2 pr-2 pb-2 grey lighten-4">
+                      <v-card-text class="grey lighten-4">
+                        <v-text-field
+                          v-model="userModel.firstName"
+                          label="First Name">
+                        </v-text-field>
+                        <v-text-field
+                          v-model="userModel.middleName"
+                          label="Middle Name">
+                        </v-text-field>
+                        <v-text-field
+                          v-model="userModel.lastName"
+                          label="Last Name">
+                        </v-text-field>
+                        <v-btn small :disabled="!enable.nameChanged" color="success">
+                          SAVE
+                        </v-btn>
+                        <v-btn small :disabled="!enable.nameChanged" @click="cancelEdit('name')">
+                          CANCEL
+                        </v-btn>
+                      </v-card-text>
+                    </v-card>
+                  </v-expansion-panel-content>
+
+                  <v-expansion-panel-content ripple>
+                    <div slot="header">
+                      <div class="caption">Birthdate</div>
+                      <div class="body-2">November 29, 1985</div>
+                    </div>
+                    <v-card>
+                      <v-card-text class="grey lighten-4">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                      </v-card-text>
+                    </v-card>
+                  </v-expansion-panel-content>
+
+                </v-expansion-panel>
               </v-card>
             </v-flex>
           </v-layout>
@@ -39,29 +72,57 @@
 import router from '../routes'
 
 export default {
-  data () {
+  data: function () {
     return {
-      attributes: [
-        { name: 'Last Name', value: '' },
-        { name: 'First Name', value: '' },
-        { name: 'Middle Name', value: '' },
-        { name: 'Birthdate', value: '' },
-        { name: 'Mobile Phone No.', value: '' },
-        { name: 'Home Phone No.', value: '' },
-        { name: 'Business Phone No.', value: '' },
-        { name: 'Home Address', value: '' },
-        { name: 'Business Address', value: '' }
-      ]
+      enable: {
+        nameChanged: false
+      },
+      userModel: {
+        firstName: 'First Name',
+        middleName: 'Middle Name',
+        lastName: 'Last Name'
+      },
+      userData: {
+        firstName: 'First Name',
+        middleName: 'Middle Name',
+        lastName: 'Last Name'
+      },
+      message: 'test'
     }
   },
   methods: {
     getAttributes: function () {
       console.log('getting attributes from server...')
+      console.log(this.usermodel.firstName)
     },
     navSignOut: function () {
       console.log('signing out')
       this.$store.state.authenticated = false
       router.push('/home')
+    },
+    cancelEdit: function (field) {
+      if (field === 'name') {
+        this.userModel.firstName = this.userData.firstName
+        this.userModel.middleName = this.userData.middleName
+        this.userModel.lastName = this.userData.lastName
+      }
+    },
+    updateName: function () {
+
+    }
+  },
+  computed: {
+    fullName: function () {
+      return this.userModel.firstName + ' ' + this.userModel.middleName + ' ' + this.userModel.lastName
+    }
+  },
+  watch: {
+    fullName: function () {
+      if ((this.userModel.firstName !== this.userData.firstName) || (this.userModel.middleName !== this.userData.middleName) || (this.userModel.lastName !== this.userData.lastName)) {
+        this.enable.nameChanged = true
+      } else {
+        this.enable.nameChanged = false
+      }
     }
   }
 }

@@ -18,7 +18,7 @@
                   <v-expansion-panel-content ripple>
                     <div slot="header">
                       <div class="caption">Name</div>
-                      <div class="body-2">{{ fullName }}</div>
+                      <div class="body-2">{{ fullName === '  ' ? '...' : fullName }}</div>
                     </div>
                     <v-card class="pt-4 pl-2 pr-2 pb-2 grey lighten-4">
                       <v-card-text class="grey lighten-4">
@@ -37,7 +37,7 @@
                         <v-card-actions>
                           <v-btn small :disabled="!enable.nameEditButtons" @click="cancelEdit('name')">CANCEL</v-btn>
                           <v-spacer></v-spacer>
-                          <v-btn small :disabled="!enable.nameEditButtons" @click="updateDate()" color="success">SAVE</v-btn>
+                          <v-btn small :disabled="!enable.nameEditButtons" @click="updateName()" color="success">SAVE</v-btn>
                         </v-card-actions>
                       </v-card-text>
                     </v-card>
@@ -349,13 +349,7 @@ export default {
   },
   computed: {
     fullName: function () {
-      if ((this.userModel.firstName !== '') ||
-          (this.userModel.middleName !== '') ||
-          (this.userModel.lastName !== '')) {
-        return this.userModel.firstName + ' ' + this.userModel.middleName + ' ' + this.userModel.lastName
-      } else {
-        return '...'
-      }
+      return this.userModel.firstName + ' ' + this.userModel.middleName + ' ' + this.userModel.lastName
     },
     birthDate: function () {
       return this.userModel.birthDate

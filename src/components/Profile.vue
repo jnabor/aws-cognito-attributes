@@ -8,7 +8,7 @@
               <v-card class="elevation-0 mr-2 transparent">
                 <div class="headline mb-2">User Profile</div>
                 <div class="body-1">Manage your basic information: your name, email, and phone number, etc. Help others find you and make it easier to get in touch.</div>
-                 <v-btn small @click="getAttributes()">Test</v-btn>
+                <!-- <v-btn small @click="getAttributes()">Test</v-btn> -->
               </v-card>
             </v-flex>
             <v-flex xl4 lg5 md6 sm6>
@@ -113,7 +113,7 @@
                         </v-text-field>
                         <v-text-field
                           v-model="userModel.address.zipcode"
-                          label="Province/State">
+                          label="Zip Code">
                         </v-text-field>
                         <v-text-field
                           v-model="userModel.address.country"
@@ -214,7 +214,7 @@ export default {
         } else if (attribute.Name === 'email') {
           this.userModel.emailAddress = attribute.Value
           this.userData.emailAddress = attribute.Value
-        } else if (attribute.Name === 'phone') {
+        } else if (attribute.Name === 'phone_number') {
           this.userModel.phoneNumber = attribute.Value
           this.userData.phoneNumber = attribute.Value
         } else if (attribute.Name === 'custom:address_line') {

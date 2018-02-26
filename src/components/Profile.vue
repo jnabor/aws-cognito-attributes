@@ -34,12 +34,11 @@
                           v-model="userModel.lastName"
                           label="Last Name">
                         </v-text-field>
-                        <v-btn small :disabled="!enable.nameEditButtons" @click="updateDate()" color="success">
-                          SAVE
-                        </v-btn>
-                        <v-btn small :disabled="!enable.nameEditButtons" @click="cancelEdit('name')">
-                          CANCEL
-                        </v-btn>
+                        <v-card-actions>
+                          <v-btn small :disabled="!enable.nameEditButtons" @click="cancelEdit('name')">CANCEL</v-btn>
+                          <v-spacer></v-spacer>
+                          <v-btn small :disabled="!enable.nameEditButtons" @click="updateDate()" color="success">SAVE</v-btn>
+                        </v-card-actions>
                       </v-card-text>
                     </v-card>
                   </v-expansion-panel-content>
@@ -47,14 +46,14 @@
                   <v-expansion-panel-content expand-icon="">
                     <div slot="header">
                       <div class="caption">Email Address</div>
-                      <div class="body-2">{{ userModel.emailAddress }}</div>
+                      <div class="body-2">{{ userModel.emailAddress === ''? '...' :  userModel.emailAddress }}</div>
                     </div>
                   </v-expansion-panel-content>
 
                   <v-expansion-panel-content ripple>
                     <div slot="header">
                       <div class="caption">Birthday Date</div>
-                      <div class="body-2">{{ userModel.birthDate }}</div>
+                      <div class="body-2">{{ userModel.birthDate === ''? '...' : userModel.birthDate }}</div>
                     </div>
                     <v-card class="pt-4 pl-2 pr-2 pb-2 grey lighten-4">
                       <v-card-text class="grey lighten-4">
@@ -64,12 +63,11 @@
                           v-model="userModel.birthDate"
                           :max="new Date().toISOString().substr(0, 10)">
                         </v-date-picker>
-                        <v-btn small :disabled="!enable.dateEditButtons" @click="updateDate()" color="success">
-                          SAVE
-                        </v-btn>
-                        <v-btn small :disabled="!enable.dateEditButtons" @click="cancelEdit('date')">
-                          CANCEL
-                        </v-btn>
+                        <v-card-actions>
+                          <v-btn small :disabled="!enable.dateEditButtons" @click="cancelEdit('date')">CANCEL</v-btn>
+                          <v-spacer></v-spacer>
+                          <v-btn small :disabled="!enable.dateEditButtons" @click="updateDate()" color="success">SAVE</v-btn>
+                        </v-card-actions>
                       </v-card-text>
                     </v-card>
                   </v-expansion-panel-content>
@@ -77,27 +75,59 @@
                   <v-expansion-panel-content ripple>
                     <div slot="header">
                       <div class="caption">Phone Number</div>
-                      <div class="body-2">{{ userModel.phoneNumber }}</div>
+                      <div class="body-2">{{ userModel.phoneNumber === ''? '...' :  userModel.phoneNumber }}</div>
                     </div>
                     <v-card class="pt-4 pl-2 pr-2 pb-2 grey lighten-4">
                       <v-card-text class="grey lighten-4">
                         <v-text-field
-                          name="input-3-3"
-                          label="Phone Number"
                           v-model="userModel.phoneNumber"
-                          prepend-icon="phone"
-                          single-line>
+                          label="Phone Number"
+                          prepend-icon="phone">
                         </v-text-field>
-                        <v-btn small :disabled="!enable.phoneEditButtons" @click="updatePhone()" color="success">
-                          SAVE
-                        </v-btn>
-                        <v-btn small :disabled="!enable.phoneEditButtons" @click="cancelEdit('phone')">
-                          CANCEL
-                        </v-btn>
+                        <v-card-actions>
+                          <v-btn small :disabled="!enable.phoneEditButtons" @click="cancelEdit('phone')">CANCEL</v-btn>
+                          <v-spacer></v-spacer>
+                          <v-btn small :disabled="!enable.phoneEditButtons" @click="updatePhone()" color="success">SAVE</v-btn>
+                        </v-card-actions>
                       </v-card-text>
                     </v-card>
                   </v-expansion-panel-content>
 
+                  <v-expansion-panel-content ripple>
+                    <div slot="header">
+                      <div class="caption">Address</div>
+                      <div class="body-2">{{ address }}</div>
+                    </div>
+                    <v-card class="pt-4 pl-2 pr-2 pb-2 grey lighten-4">
+                      <v-card-text class="grey lighten-4">
+                        <v-text-field
+                          v-model="userModel.address.line"
+                          label="Address Line">
+                        </v-text-field>
+                        <v-text-field
+                          v-model="userModel.address.city"
+                          label="Town/City">
+                        </v-text-field>
+                        <v-text-field
+                          v-model="userModel.address.state"
+                          label="Province/State">
+                        </v-text-field>
+                        <v-text-field
+                          v-model="userModel.address.zipcode"
+                          label="Province/State">
+                        </v-text-field>
+                        <v-text-field
+                          v-model="userModel.address.country"
+                          label="Country">
+                        </v-text-field>
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-btn small :disabled="!enable.addressEditButtons" @click="cancelEdit('address')">CANCEL</v-btn>
+                        <v-spacer></v-spacer>
+                        <v-btn small :disabled="!enable.addressEditButtons" @click="updateAddress()" color="success">SAVE</v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-card>
             </v-flex>
@@ -120,7 +150,8 @@ export default {
       enable: {
         nameEditButtons: false,
         dateEditButtons: false,
-        phoneEditButtons: false
+        phoneEditButtons: false,
+        addressEditButtons: false
       },
       userModel: {
         firstName: '',
@@ -128,7 +159,14 @@ export default {
         lastName: '',
         birthDate: '',
         emailAddress: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        address: {
+          line: '',
+          city: '',
+          state: '',
+          zipcode: '',
+          country: ''
+        }
       },
       userData: {
         firstName: '',
@@ -136,7 +174,14 @@ export default {
         lastName: '',
         birthdate: '',
         emailAddress: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        address: {
+          line: '',
+          city: '',
+          state: '',
+          zipcode: '',
+          country: ''
+        }
       }
     }
   },
@@ -179,6 +224,11 @@ export default {
           this.userModel.phoneNumber = attribute.Value
           this.userData.phoneNumber = attribute.Value
         }
+        // custom:address_line
+        // custom:address_city
+        // custom:address_state
+        // custom:address_zipcode
+        // custom:address_country
         console.log('property:' + attribute.Name + ' value:' + attribute.Value)
       }
     },
@@ -196,6 +246,8 @@ export default {
         this.userModel.birthDate = this.userData.birthDate
       } else if (field === 'phone') {
         this.userModel.phoneNumber = this.userData.phoneNumber
+      } else if (field === 'address') {
+        this.userModel.address = this.userData.address
       }
     },
     updateName: function () {
@@ -253,17 +305,44 @@ export default {
         this.userData.phoneNumber = this.userModel.phoneNumber
         this.enable.phoneEditButtons = false
       })
+    },
+    updateAddress: function () {
+      console.log('updating address...')
+      var attributeList = []
+      var attributeAddress = { Name: 'address', Value: this.userModel.address }
+      var address = new AmazonCognitoIdentity.CognitoUserAttribute(attributeAddress)
+      attributeList.push(address)
+      this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
+        if (err) {
+          console.log('error: ' + err)
+          return
+        }
+        console.log('call result: ' + result)
+        this.userData.address = this.userModel.address
+        this.enable.addressEditButtons = false
+      })
     }
   },
   computed: {
     fullName: function () {
-      return this.userModel.firstName + ' ' + this.userModel.middleName + ' ' + this.userModel.lastName
+      if ((this.userModel.firstName !== '') || (this.userModel.middleName !== '') || (this.userModel.lastName !== '')) {
+        return this.userModel.firstName + ' ' + this.userModel.middleName + ' ' + this.userModel.lastName
+      } else {
+        return '...'
+      }
     },
     birthDate: function () {
       return this.userModel.birthDate
     },
     phoneNumber: function () {
       return this.userModel.phoneNumber
+    },
+    address: function () {
+      if ((this.userModel.address.line !== '') || (this.userModel.address.city !== '') || (this.userModel.address.state !== '') || (this.userModel.address.zipcode !== '') || (this.userModel.address.country !== '')) {
+        return this.address.line + ' ' + this.address.city + ' ' + this.address.state + ' ' + this.address.zipcode + ' ' + this.address.country
+      } else {
+        return '...'
+      }
     }
   },
   watch: {
@@ -290,14 +369,24 @@ export default {
       } else {
         this.enable.phoneEditButtons = false
       }
+    },
+    address: function () {
+      console.log('address changed')
+      if (this.userModel.address !== this.userData.adress) {
+        this.enable.addressEditButtons = true
+      } else {
+        this.enable.addressEditButtons = false
+      }
     }
   },
-  mounted: function () {
+  beforeMount: function () {
     if (this.$store.state.authenticated === true) {
       this.getAttributes()
     }
     this.enable.nameEditButtons = false
     this.enable.dateEditButtons = false
+    this.enable.phoneEditButtons = false
+    this.enable.addressEditButtons = false
   }
 }
 </script>

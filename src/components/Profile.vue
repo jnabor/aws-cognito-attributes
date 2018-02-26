@@ -81,8 +81,7 @@
                       <v-card-text class="grey lighten-4">
                         <v-text-field
                           v-model="userModel.phoneNumber"
-                          label="Phone Number"
-                          prepend-icon="phone">
+                          label="Phone Number">
                         </v-text-field>
                         <v-card-actions>
                           <v-btn small :disabled="!enable.phoneEditButtons" @click="cancelEdit('phone')">CANCEL</v-btn>
@@ -96,7 +95,7 @@
                   <v-expansion-panel-content ripple>
                     <div slot="header">
                       <div class="caption">Address</div>
-                      <div class="body-2">{{ address }}</div>
+                      <div class="body-2">{{ address === '    '? '...' : address }}</div>
                     </div>
                     <v-card class="pt-4 pl-2 pr-2 pb-2 grey lighten-4">
                       <v-card-text class="grey lighten-4">
@@ -202,33 +201,38 @@ export default {
         if (attribute.Name === 'given_name') {
           this.userModel.firstName = attribute.Value
           this.userData.firstName = attribute.Value
-        }
-        if (attribute.Name === 'middle_name') {
+        } else if (attribute.Name === 'middle_name') {
           this.userModel.middleName = attribute.Value
           this.userData.middleName = attribute.Value
-        }
-        if (attribute.Name === 'family_name') {
+        } else if (attribute.Name === 'family_name') {
           this.userModel.lastName = attribute.Value
           this.userData.lastName = attribute.Value
-        }
-        if (attribute.Name === 'birthdate') {
+        } else if (attribute.Name === 'birthdate') {
           this.userModel.birthDate = attribute.Value
           this.userData.birthDate = attribute.Value
           this.enable.dateEditButtons = false
-        }
-        if (attribute.Name === 'email') {
+        } else if (attribute.Name === 'email') {
           this.userModel.emailAddress = attribute.Value
           this.userData.emailAddress = attribute.Value
-        }
-        if (attribute.Name === 'phone') {
+        } else if (attribute.Name === 'phone') {
           this.userModel.phoneNumber = attribute.Value
           this.userData.phoneNumber = attribute.Value
+        } else if (attribute.Name === 'custom:address_line') {
+          this.userModel.address.line = attribute.Value
+          this.userData.address.line = attribute.Value
+        } else if (attribute.Name === 'custom:address_city') {
+          this.userModel.address.city = attribute.Value
+          this.userData.address.line = attribute.Value
+        } else if (attribute.Name === 'custom:address_state') {
+          this.userModel.address.state = attribute.Value
+          this.userData.address.state = attribute.Value
+        } else if (attribute.Name === 'custom:address_zipcode') {
+          this.userModel.address.zipcode = attribute.Value
+          this.userData.address.zipcode = attribute.Value
+        } else if (attribute.Name === 'custom:address_country') {
+          this.userModel.address.country = attribute.Value
+          this.userData.address.country = attribute.Value
         }
-        // custom:address_line
-        // custom:address_city
-        // custom:address_state
-        // custom:address_zipcode
-        // custom:address_country
         console.log('property:' + attribute.Name + ' value:' + attribute.Value)
       }
     },
@@ -247,7 +251,11 @@ export default {
       } else if (field === 'phone') {
         this.userModel.phoneNumber = this.userData.phoneNumber
       } else if (field === 'address') {
-        this.userModel.address = this.userData.address
+        this.userModel.address.line = this.userData.address.line
+        this.userModel.address.city = this.userData.address.city
+        this.userModel.address.state = this.userData.address.state
+        this.userModel.address.zipcode = this.userData.address.zipcode
+        this.userModel.address.country = this.userData.address.country
       }
     },
     updateName: function () {
@@ -309,23 +317,41 @@ export default {
     updateAddress: function () {
       console.log('updating address...')
       var attributeList = []
-      var attributeAddress = { Name: 'address', Value: this.userModel.address }
-      var address = new AmazonCognitoIdentity.CognitoUserAttribute(attributeAddress)
-      attributeList.push(address)
+      var attributeAddressLine = { Name: 'custom:address_line', Value: this.userModel.address.line }
+      var attributeAddressCity = { Name: 'custom:address_city', Value: this.userModel.address.city }
+      var attributeAddressState = { Name: 'custom:address_state', Value: this.userModel.address.state }
+      var attributeAddressZipcode = { Name: 'custom:address_zipcode', Value: this.userModel.address.zipcode }
+      var attributeAddressCountry = { Name: 'custom:address_country', Value: this.userModel.address.country }
+      var line = new AmazonCognitoIdentity.CognitoUserAttribute(attributeAddressLine)
+      var city = new AmazonCognitoIdentity.CognitoUserAttribute(attributeAddressCity)
+      var state = new AmazonCognitoIdentity.CognitoUserAttribute(attributeAddressState)
+      var zipcode = new AmazonCognitoIdentity.CognitoUserAttribute(attributeAddressZipcode)
+      var country = new AmazonCognitoIdentity.CognitoUserAttribute(attributeAddressCountry)
+      attributeList.push(line)
+      attributeList.push(city)
+      attributeList.push(state)
+      attributeList.push(zipcode)
+      attributeList.push(country)
       this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
         if (err) {
           console.log('error: ' + err)
           return
         }
         console.log('call result: ' + result)
-        this.userData.address = this.userModel.address
+        this.userData.address.line = this.userModel.address.line
+        this.userData.address.city = this.userModel.address.city
+        this.userData.address.state = this.userModel.address.state
+        this.userData.address.zipcode = this.userModel.address.zipcode
+        this.userData.address.country = this.userModel.address.country
         this.enable.addressEditButtons = false
       })
     }
   },
   computed: {
     fullName: function () {
-      if ((this.userModel.firstName !== '') || (this.userModel.middleName !== '') || (this.userModel.lastName !== '')) {
+      if ((this.userModel.firstName !== '') ||
+          (this.userModel.middleName !== '') ||
+          (this.userModel.lastName !== '')) {
         return this.userModel.firstName + ' ' + this.userModel.middleName + ' ' + this.userModel.lastName
       } else {
         return '...'
@@ -338,17 +364,19 @@ export default {
       return this.userModel.phoneNumber
     },
     address: function () {
-      if ((this.userModel.address.line !== '') || (this.userModel.address.city !== '') || (this.userModel.address.state !== '') || (this.userModel.address.zipcode !== '') || (this.userModel.address.country !== '')) {
-        return this.address.line + ' ' + this.address.city + ' ' + this.address.state + ' ' + this.address.zipcode + ' ' + this.address.country
-      } else {
-        return '...'
-      }
+      return this.userModel.address.line + ' ' +
+             this.userModel.address.city + ' ' +
+             this.userModel.address.state + ' ' +
+             this.userModel.address.zipcode + ' ' +
+             this.userModel.address.country
     }
   },
   watch: {
     fullName: function () {
       console.log('name changed')
-      if ((this.userModel.firstName !== this.userData.firstName) || (this.userModel.middleName !== this.userData.middleName) || (this.userModel.lastName !== this.userData.lastName)) {
+      if ((this.userModel.firstName !== this.userData.firstName) ||
+          (this.userModel.middleName !== this.userData.middleName) ||
+          (this.userModel.lastName !== this.userData.lastName)) {
         this.enable.nameEditButtons = true
       } else {
         this.enable.nameEditButtons = false
@@ -372,7 +400,11 @@ export default {
     },
     address: function () {
       console.log('address changed')
-      if (this.userModel.address !== this.userData.adress) {
+      if ((this.userModel.address.line !== this.userData.address.line) ||
+          (this.userModel.address.city !== this.userData.address.city) ||
+          (this.userModel.address.state !== this.userData.address.state) ||
+          (this.userModel.address.zipcode !== this.userData.address.zipcode) ||
+          (this.userModel.address.country !== this.userData.address.country)) {
         this.enable.addressEditButtons = true
       } else {
         this.enable.addressEditButtons = false

@@ -10,9 +10,11 @@
 4. Sign In for verified users
 5. Sign Out
 6. Password reset
+7. Default Attributes
+8. Custom Attributes
 
 ### Live Demo:
-http://auth-cognito-demo.s3-website-ap-southeast-1.amazonaws.com/
+http://auth-cognito-attributes.s3-website-ap-southeast-1.amazonaws.com/home
 
 ## Build Setup
 

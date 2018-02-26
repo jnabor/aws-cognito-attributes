@@ -8,6 +8,7 @@
               <v-card class="elevation-0 mr-2 transparent">
                 <div class="headline mb-2">User Profile</div>
                 <div class="body-1">Manage your basic information: your name, email, and phone number, etc. Help others find you and make it easier to get in touch.</div>
+                 <v-btn small @click="getAttributes()">Test</v-btn>
               </v-card>
             </v-flex>
             <v-flex xl4 lg5 md6 sm6>
@@ -43,6 +44,13 @@
                     </v-card>
                   </v-expansion-panel-content>
 
+                  <v-expansion-panel-content expand-icon="">
+                    <div slot="header">
+                      <div class="caption">Email Address</div>
+                      <div class="body-2">{{ userModel.emailAddress }}</div>
+                    </div>
+                  </v-expansion-panel-content>
+
                   <v-expansion-panel-content ripple>
                     <div slot="header">
                       <div class="caption">Birthday Date</div>
@@ -51,8 +59,8 @@
                     <v-card class="pt-4 pl-2 pr-2 pb-2 grey lighten-4">
                       <v-card-text class="grey lighten-4">
                         <v-date-picker
-                          full-width dark
-                          class="mb-3"
+                          full-width
+                          class="mb-3 grey lighten-4 black--text"
                           v-model="userModel.birthDate"
                           :max="new Date().toISOString().substr(0, 10)">
                         </v-date-picker>
@@ -60,6 +68,30 @@
                           SAVE
                         </v-btn>
                         <v-btn small :disabled="!enable.dateEditButtons" @click="cancelEdit('date')">
+                          CANCEL
+                        </v-btn>
+                      </v-card-text>
+                    </v-card>
+                  </v-expansion-panel-content>
+
+                  <v-expansion-panel-content ripple>
+                    <div slot="header">
+                      <div class="caption">Phone Number</div>
+                      <div class="body-2">{{ userModel.phoneNumber }}</div>
+                    </div>
+                    <v-card class="pt-4 pl-2 pr-2 pb-2 grey lighten-4">
+                      <v-card-text class="grey lighten-4">
+                        <v-text-field
+                          name="input-3-3"
+                          label="Phone Number"
+                          v-model="userModel.phoneNumber"
+                          prepend-icon="phone"
+                          single-line>
+                        </v-text-field>
+                        <v-btn small :disabled="!enable.phoneEditButtons" @click="updatePhone()" color="success">
+                          SAVE
+                        </v-btn>
+                        <v-btn small :disabled="!enable.phoneEditButtons" @click="cancelEdit('phone')">
                           CANCEL
                         </v-btn>
                       </v-card-text>
@@ -87,19 +119,24 @@ export default {
       modal: false,
       enable: {
         nameEditButtons: false,
-        dateEditButtons: false
+        dateEditButtons: false,
+        phoneEditButtons: false
       },
       userModel: {
         firstName: '',
         middleName: '',
         lastName: '',
-        birthDate: ''
+        birthDate: '',
+        emailAddress: '',
+        phoneNumber: ''
       },
       userData: {
         firstName: '',
         middleName: '',
         lastName: '',
-        birthdate: ''
+        birthdate: '',
+        emailAddress: '',
+        phoneNumber: ''
       }
     }
   },
@@ -134,7 +171,14 @@ export default {
           this.userData.birthDate = attribute.Value
           this.enable.dateEditButtons = false
         }
-
+        if (attribute.Name === 'email') {
+          this.userModel.emailAddress = attribute.Value
+          this.userData.emailAddress = attribute.Value
+        }
+        if (attribute.Name === 'phone') {
+          this.userModel.phoneNumber = attribute.Value
+          this.userData.phoneNumber = attribute.Value
+        }
         console.log('property:' + attribute.Name + ' value:' + attribute.Value)
       }
     },
@@ -150,6 +194,8 @@ export default {
         this.userModel.lastName = this.userData.lastName
       } else if (field === 'date') {
         this.userModel.birthDate = this.userData.birthDate
+      } else if (field === 'phone') {
+        this.userModel.phoneNumber = this.userData.phoneNumber
       }
     },
     updateName: function () {
@@ -191,6 +237,22 @@ export default {
         this.userData.birthDate = this.userModel.birthDate
         this.enable.dateEditButtons = false
       })
+    },
+    updatePhone: function () {
+      console.log('updating phone number...')
+      var attributeList = []
+      var attributePhoneNumber = { Name: 'phone_number', Value: this.userModel.phoneNumber }
+      var phoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(attributePhoneNumber)
+      attributeList.push(phoneNumber)
+      this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
+        if (err) {
+          console.log('error: ' + err)
+          return
+        }
+        console.log('call result: ' + result)
+        this.userData.phoneNumber = this.userModel.phoneNumber
+        this.enable.phoneEditButtons = false
+      })
     }
   },
   computed: {
@@ -199,6 +261,9 @@ export default {
     },
     birthDate: function () {
       return this.userModel.birthDate
+    },
+    phoneNumber: function () {
+      return this.userModel.phoneNumber
     }
   },
   watch: {
@@ -216,6 +281,14 @@ export default {
         this.enable.dateEditButtons = true
       } else {
         this.enable.dateEditButtons = false
+      }
+    },
+    phoneNumber: function () {
+      console.log('phone number changed')
+      if (this.userModel.phoneNumber !== this.userData.phoneNumber) {
+        this.enable.phoneEditButtons = true
+      } else {
+        this.enable.phoneEditButtons = false
       }
     }
   },

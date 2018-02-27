@@ -13,121 +13,142 @@
             </v-flex>
             <v-flex xl4 lg5 md6 sm6>
               <v-card class="mb-2">
-                <v-expansion-panel>
-
-                  <v-expansion-panel-content ripple>
-                    <div slot="header">
-                      <div class="caption">Name</div>
-                      <div class="body-2">{{ fullName === '  ' ? '...' : fullName }}</div>
-                    </div>
-                    <v-card class="pt-4 pl-2 pr-2 pb-2 grey lighten-4">
-                      <v-card-text class="grey lighten-4">
-                        <v-text-field
-                          v-model="userModel.firstName"
-                          label="First Name">
-                        </v-text-field>
-                        <v-text-field
-                          v-model="userModel.middleName"
-                          label="Middle Name">
-                        </v-text-field>
-                        <v-text-field
-                          v-model="userModel.lastName"
-                          label="Last Name">
-                        </v-text-field>
-                        <v-card-actions>
-                          <v-btn small :disabled="!enable.nameEditButtons" @click="cancelEdit('name')">CANCEL</v-btn>
-                          <v-spacer></v-spacer>
-                          <v-btn small :disabled="!enable.nameEditButtons" @click="updateName()" color="success">SAVE</v-btn>
-                        </v-card-actions>
-                      </v-card-text>
-                    </v-card>
-                  </v-expansion-panel-content>
-
-                  <v-expansion-panel-content expand-icon="">
-                    <div slot="header">
-                      <div class="caption">Email Address</div>
-                      <div class="body-2">{{ userModel.emailAddress === ''? '...' :  userModel.emailAddress }}</div>
-                    </div>
-                  </v-expansion-panel-content>
-
-                  <v-expansion-panel-content ripple>
-                    <div slot="header">
-                      <div class="caption">Birthday Date</div>
-                      <div class="body-2">{{ userModel.birthDate === ''? '...' : userModel.birthDate }}</div>
-                    </div>
-                    <v-card class="pt-4 pl-2 pr-2 pb-2 grey lighten-4">
-                      <v-card-text class="grey lighten-4">
-                        <v-date-picker
-                          full-width
-                          class="mb-3 grey lighten-4 black--text"
-                          v-model="userModel.birthDate"
-                          :max="new Date().toISOString().substr(0, 10)">
-                        </v-date-picker>
-                        <v-card-actions>
-                          <v-btn small :disabled="!enable.dateEditButtons" @click="cancelEdit('date')">CANCEL</v-btn>
-                          <v-spacer></v-spacer>
-                          <v-btn small :disabled="!enable.dateEditButtons" @click="updateDate()" color="success">SAVE</v-btn>
-                        </v-card-actions>
-                      </v-card-text>
-                    </v-card>
-                  </v-expansion-panel-content>
-
-                  <v-expansion-panel-content ripple>
-                    <div slot="header">
-                      <div class="caption">Phone Number</div>
-                      <div class="body-2">{{ userModel.phoneNumber === ''? '...' :  userModel.phoneNumber }}</div>
-                    </div>
-                    <v-card class="pt-4 pl-2 pr-2 pb-2 grey lighten-4">
-                      <v-card-text class="grey lighten-4">
-                        <v-text-field
-                          v-model="userModel.phoneNumber"
-                          label="Phone Number">
-                        </v-text-field>
-                        <v-card-actions>
-                          <v-btn small :disabled="!enable.phoneEditButtons" @click="cancelEdit('phone')">CANCEL</v-btn>
-                          <v-spacer></v-spacer>
-                          <v-btn small :disabled="!enable.phoneEditButtons" @click="updatePhone()" color="success">SAVE</v-btn>
-                        </v-card-actions>
-                      </v-card-text>
-                    </v-card>
-                  </v-expansion-panel-content>
-
-                  <v-expansion-panel-content ripple>
-                    <div slot="header">
-                      <div class="caption">Address</div>
-                      <div class="body-2">{{ address === '    '? '...' : address }}</div>
-                    </div>
-                    <v-card class="pt-4 pl-2 pr-2 pb-2 grey lighten-4">
-                      <v-card-text class="grey lighten-4">
-                        <v-text-field
-                          v-model="userModel.address.line"
-                          label="Address Line">
-                        </v-text-field>
-                        <v-text-field
-                          v-model="userModel.address.city"
-                          label="Town/City">
-                        </v-text-field>
-                        <v-text-field
-                          v-model="userModel.address.state"
-                          label="Province/State">
-                        </v-text-field>
-                        <v-text-field
-                          v-model="userModel.address.zipcode"
-                          label="Zip Code">
-                        </v-text-field>
-                        <v-text-field
-                          v-model="userModel.address.country"
-                          label="Country">
-                        </v-text-field>
-                      </v-card-text>
-                      <v-card-actions>
-                        <v-btn small :disabled="!enable.addressEditButtons" @click="cancelEdit('address')">CANCEL</v-btn>
-                        <v-spacer></v-spacer>
-                        <v-btn small :disabled="!enable.addressEditButtons" @click="updateAddress()" color="success">SAVE</v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-expansion-panel-content>
-                </v-expansion-panel>
+                <v-card-text class="pl-4 pr-4">
+                  <div class="tool a-0 ma-0">
+                    <div class="caption">Name</div>
+                    <v-spacer></v-spacer>
+                    <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.name = !edit.name">
+                      <v-icon small color="indigo lighten-3">edit</v-icon>
+                    </v-btn>
+                  </div>
+                  <div class="body-2">{{ fullName === '  ' ? '...' : fullName }}</div>
+                </v-card-text>
+                <div v-if="edit.name" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
+                  <v-card-text class="indigo lighten-5">
+                    <v-text-field
+                      v-model="userModel.firstName"
+                      label="First Name">
+                    </v-text-field>
+                    <v-text-field
+                      v-model="userModel.middleName"
+                      label="Middle Name">
+                    </v-text-field>
+                    <v-text-field
+                      v-model="userModel.lastName"
+                      label="Last Name">
+                    </v-text-field>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn small :disabled="!enable.nameEditButtons" @click="cancelEdit('name')">CANCEL</v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn small :disabled="!enable.nameEditButtons" @click="updateName()" color="success">SAVE</v-btn>
+                  </v-card-actions>
+                </div>
+                <v-divider></v-divider>
+                <v-card-text class="pl-4 pr-4">
+                  <div class="caption">Email Address</div>
+                  <div class="body-2">{{ userModel.emailAddress === ''? '...' :  userModel.emailAddress }}</div>
+                </v-card-text>
+                <v-divider></v-divider>
+                <v-card-text class="pl-4 pr-4">
+                  <div class="tool a-0 ma-0">
+                    <div class="caption">Birth Date</div>
+                    <v-spacer></v-spacer>
+                    <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.birthdate = !edit.birthdate">
+                      <v-icon small color="indigo lighten-3">edit</v-icon>
+                    </v-btn>
+                  </div>
+                  <div class="body-2">{{ userModel.birthDate === ''? '...' : userModel.birthDate }}</div>
+                </v-card-text>
+                <div v-if="edit.birthdate" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
+                  <v-card-text class="pl-4 pr-4">
+                    <v-date-picker
+                      full-width
+                      class="mb-3 grey lighten-4 black--text"
+                      v-model="userModel.birthDate"
+                      :max="new Date().toISOString().substr(0, 10)">
+                    </v-date-picker>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn small :disabled="!enable.dateEditButtons" @click="cancelEdit('date')">CANCEL</v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn small :disabled="!enable.dateEditButtons" @click="updateDate()" color="success">SAVE</v-btn>
+                  </v-card-actions>
+                </div>
+                <v-divider></v-divider>
+                <v-card-text class="pl-4 pr-4">
+                  <div class="tool a-0 ma-0">
+                    <div class="caption">Phone Number</div>
+                    <v-spacer></v-spacer>
+                    <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.phone = !edit.phone">
+                      <v-icon small color="indigo lighten-3">edit</v-icon>
+                    </v-btn>
+                  </div>
+                  <div class="body-2">Mobile    {{ userModel.phoneNumber === ''? '...' :  userModel.phoneNumber }}</div>
+                  <div class="body-2">Home     {{ userModel.phoneNumber === ''? '...' :  userModel.phoneNumber }}</div>
+                  <div class="body-2">Business {{ userModel.phoneNumber === ''? '...' :  userModel.phoneNumber }}</div>
+                </v-card-text>
+                <div v-if="edit.phone" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
+                  <v-card-text class="indigo lighten-5">
+                    <v-text-field
+                      v-model="userModel.phoneNumber"
+                      label="Mobile Number">
+                    </v-text-field>
+                    <v-text-field
+                      v-model="userModel.phoneNumber"
+                      label="Home Number">
+                    </v-text-field>
+                    <v-text-field
+                      v-model="userModel.phoneNumber"
+                      label="Business Number">
+                    </v-text-field>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn small :disabled="!enable.phoneEditButtons" @click="cancelEdit('phone')">CANCEL</v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn small :disabled="!enable.phoneEditButtons" @click="updatePhone()" color="success">SAVE</v-btn>
+                  </v-card-actions>
+                </div>
+                <v-divider></v-divider>
+                <v-card-text class="pl-4 pr-4">
+                  <div class="tool a-0 ma-0">
+                    <div class="body-1">Address</div>
+                    <v-spacer></v-spacer>
+                    <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.address = !edit.address">
+                      <v-icon small color="indigo lighten-3">edit</v-icon>
+                    </v-btn>
+                  </div>
+                  <div class="body-2">{{ address === '    '? '...' :  address }}</div>
+                </v-card-text>
+                <div v-if="edit.address" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
+                  <v-card-text class="indigo lighten-5">
+                    <v-text-field
+                      v-model="userModel.address.line"
+                      label="Address Line">
+                    </v-text-field>
+                    <v-text-field
+                      v-model="userModel.address.city"
+                      label="Town/City">
+                    </v-text-field>
+                    <v-text-field
+                      v-model="userModel.address.state"
+                      label="Province/State">
+                    </v-text-field>
+                    <v-text-field
+                      v-model="userModel.address.zipcode"
+                      label="Zip Code">
+                    </v-text-field>
+                    <v-text-field
+                      v-model="userModel.address.country"
+                      label="Country">
+                    </v-text-field>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn small :disabled="!enable.addressEditButtons" @click="cancelEdit('address')">CANCEL</v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn small :disabled="!enable.addressEditButtons" @click="updateAddress()" color="success">SAVE</v-btn>
+                  </v-card-actions>
+                </div>
               </v-card>
             </v-flex>
           </v-layout>
@@ -146,6 +167,12 @@ export default {
     return {
       menu: false,
       modal: false,
+      edit: {
+        name: false,
+        birthdate: false,
+        phone: false,
+        address: false
+      },
       enable: {
         nameEditButtons: false,
         dateEditButtons: false,
@@ -419,4 +446,15 @@ export default {
 
 <style scoped>
 
+.tool {
+    position: relative;
+    padding: 0px;
+    margin: 0px;
+}
+
+.topright {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
 </style>

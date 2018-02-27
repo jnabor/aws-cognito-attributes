@@ -15,7 +15,7 @@
               <v-card class="mb-2">
                 <v-card-text class="pl-4 pr-4">
                   <div class="tool a-0 ma-0">
-                    <div class="caption">Name</div>
+                    <div class="caption mb-1">Name</div>
                     <v-spacer></v-spacer>
                     <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.name = !edit.name">
                       <v-icon small color="indigo lighten-3">edit</v-icon>
@@ -39,20 +39,21 @@
                     </v-text-field>
                   </v-card-text>
                   <v-card-actions>
-                    <v-btn small :disabled="!enable.nameEditButtons" @click="cancelEdit('name')">CANCEL</v-btn>
+                    <v-btn class="ml-4" small :disabled="!enable.nameEditButtons" @click="cancelEdit('name')">CANCEL</v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn small :disabled="!enable.nameEditButtons" @click="updateName()" color="success">SAVE</v-btn>
+                    <v-btn small  @click="edit.name = false" >CLOSE</v-btn>
+                    <v-btn class="mr-4" small :disabled="!enable.nameEditButtons" @click="updateName()" color="success">SAVE</v-btn>
                   </v-card-actions>
                 </div>
                 <v-divider></v-divider>
                 <v-card-text class="pl-4 pr-4">
-                  <div class="caption">Email Address</div>
+                  <div class="caption mb-1">Email Address</div>
                   <div class="body-2">{{ userModel.emailAddress === ''? '...' :  userModel.emailAddress }}</div>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-text class="pl-4 pr-4">
                   <div class="tool a-0 ma-0">
-                    <div class="caption">Birth Date</div>
+                    <div class="caption mb-1">Birth Date</div>
                     <v-spacer></v-spacer>
                     <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.birthdate = !edit.birthdate">
                       <v-icon small color="indigo lighten-3">edit</v-icon>
@@ -70,15 +71,16 @@
                     </v-date-picker>
                   </v-card-text>
                   <v-card-actions>
-                    <v-btn small :disabled="!enable.dateEditButtons" @click="cancelEdit('date')">CANCEL</v-btn>
+                    <v-btn class="ml-4" small :disabled="!enable.dateEditButtons" @click="cancelEdit('date')">CANCEL</v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn small :disabled="!enable.dateEditButtons" @click="updateDate()" color="success">SAVE</v-btn>
+                    <v-btn small  @click="edit.birthdate = false" >CLOSE</v-btn>
+                    <v-btn class="mr-4" small :disabled="!enable.dateEditButtons" @click="updateDate()" color="success">SAVE</v-btn>
                   </v-card-actions>
                 </div>
                 <v-divider></v-divider>
                 <v-card-text class="pl-4 pr-4">
                   <div class="tool a-0 ma-0">
-                    <div class="caption">Phone Number</div>
+                    <div class="caption mb-1">Phone Number</div>
                     <v-spacer></v-spacer>
                     <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.phone = !edit.phone">
                       <v-icon small color="indigo lighten-3">edit</v-icon>
@@ -104,15 +106,16 @@
                     </v-text-field>
                   </v-card-text>
                   <v-card-actions>
-                    <v-btn small :disabled="!enable.phoneEditButtons" @click="cancelEdit('phone')">CANCEL</v-btn>
+                    <v-btn class="ml-4" small :disabled="!enable.phoneEditButtons" @click="cancelEdit('phone')">CANCEL</v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn small :disabled="!enable.phoneEditButtons" @click="updatePhone()" color="success">SAVE</v-btn>
+                    <v-btn small  @click="edit.phone = false" >CLOSE</v-btn>
+                    <v-btn class="mr-4" small :disabled="!enable.phoneEditButtons" @click="updatePhone()" color="success">SAVE</v-btn>
                   </v-card-actions>
                 </div>
                 <v-divider></v-divider>
                 <v-card-text class="pl-4 pr-4">
                   <div class="tool a-0 ma-0">
-                    <div class="body-1">Address</div>
+                    <div class="caption mb-1">Address</div>
                     <v-spacer></v-spacer>
                     <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.address = !edit.address">
                       <v-icon small color="indigo lighten-3">edit</v-icon>
@@ -144,9 +147,10 @@
                     </v-text-field>
                   </v-card-text>
                   <v-card-actions>
-                    <v-btn small :disabled="!enable.addressEditButtons" @click="cancelEdit('address')">CANCEL</v-btn>
+                    <v-btn class="ml-4" small :disabled="!enable.addressEditButtons" @click="cancelEdit('address')">CANCEL</v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn small :disabled="!enable.addressEditButtons" @click="updateAddress()" color="success">SAVE</v-btn>
+                    <v-btn small  @click="edit.address = false" >CLOSE</v-btn>
+                    <v-btn class="mr-4" small :disabled="!enable.addressEditButtons" @click="updateAddress()" color="success">SAVE</v-btn>
                   </v-card-actions>
                 </div>
               </v-card>

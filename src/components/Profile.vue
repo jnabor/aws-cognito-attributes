@@ -86,24 +86,26 @@
                       <v-icon small color="indigo lighten-3">edit</v-icon>
                     </v-btn>
                   </div>
-                  <div class="body-2">Mobile    {{ userModel.phoneNumber === ''? '...' :  userModel.phoneNumber }}</div>
-                  <div class="body-2">Home     {{ userModel.phoneNumber === ''? '...' :  userModel.phoneNumber }}</div>
-                  <div class="body-2">Business {{ userModel.phoneNumber === ''? '...' :  userModel.phoneNumber }}</div>
+                  <div class="body-2">Mobile    {{ userModel.phoneNumber.mobile === ''? '...' :  userModel.phoneNumber.mobile }}</div>
+                  <div class="body-2">Business  {{ userModel.phoneNumber.business === ''? '...' :  userModel.phoneNumber.business }}</div>
+                  <div class="body-2">Home      {{ userModel.phoneNumber.home === ''? '...' :  userModel.phoneNumber.home }}</div>
                 </v-card-text>
                 <div v-if="edit.phone" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
                   <v-card-text class="indigo lighten-5">
                     <v-text-field
-                      v-model="userModel.phoneNumber"
+                      v-model="userModel.phoneNumber.mobile"
                       label="Mobile Number">
                     </v-text-field>
                     <v-text-field
-                      v-model="userModel.phoneNumber"
-                      label="Home Number">
-                    </v-text-field>
-                    <v-text-field
-                      v-model="userModel.phoneNumber"
+                      v-model="userModel.phoneNumber.business"
                       label="Business Number">
                     </v-text-field>
+                    <v-text-field
+                      v-model="userModel.phoneNumber.home"
+                      label="Home Number">
+                    </v-text-field>
+                    Model: {{ userModel.phoneNumber }} <br/>
+                    Data: {{ userData.phoneNumber }} <br/>
                   </v-card-text>
                   <v-card-actions>
                     <v-btn class="ml-4" small :disabled="!enable.phoneEditButtons" @click="cancelEdit('phone')">CANCEL</v-btn>
@@ -189,7 +191,11 @@ export default {
         lastName: '',
         birthDate: '',
         emailAddress: '',
-        phoneNumber: '',
+        phoneNumber: {
+          mobile: '',
+          business: '',
+          home: ''
+        },
         address: {
           line: '',
           city: '',
@@ -204,7 +210,11 @@ export default {
         lastName: '',
         birthdate: '',
         emailAddress: '',
-        phoneNumber: '',
+        phoneNumber: {
+          mobile: '',
+          business: '',
+          home: ''
+        },
         address: {
           line: '',
           city: '',
@@ -245,9 +255,9 @@ export default {
         } else if (attribute.Name === 'email') {
           this.userModel.emailAddress = attribute.Value
           this.userData.emailAddress = attribute.Value
-        } else if (attribute.Name === 'phone_number') {
-          this.userModel.phoneNumber = attribute.Value
-          this.userData.phoneNumber = attribute.Value
+        } else if (attribute.Name === 'custom:phone_numbers') {
+          this.userData.phoneNumber = JSON.parse(attribute.Value)
+          this.userModel.phoneNumber = JSON.parse(attribute.Value)
         } else if (attribute.Name === 'custom:address_line') {
           this.userModel.address.line = attribute.Value
           this.userData.address.line = attribute.Value
@@ -280,7 +290,7 @@ export default {
       } else if (field === 'date') {
         this.userModel.birthDate = this.userData.birthDate
       } else if (field === 'phone') {
-        this.userModel.phoneNumber = this.userData.phoneNumber
+        this.userModel.phoneNumber = JSON.parse(JSON.stringify(this.userData.phoneNumber))
       } else if (field === 'address') {
         this.userModel.address.line = this.userData.address.line
         this.userModel.address.city = this.userData.address.city
@@ -332,16 +342,19 @@ export default {
     updatePhone: function () {
       console.log('updating phone number...')
       var attributeList = []
-      var attributePhoneNumber = { Name: 'phone_number', Value: this.userModel.phoneNumber }
+      // pack all phone numbers in JSON
+      var phoneNumbers = JSON.stringify(this.userModel.phoneNumber)
+      console.log('saving numbers :' + phoneNumbers)
+      var attributePhoneNumber = { Name: 'custom:phone_numbers', Value: phoneNumbers }
       var phoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(attributePhoneNumber)
       attributeList.push(phoneNumber)
       this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
         if (err) {
-          console.log('error: ' + err)
+          console.log('error: ' + JSON.stringify(err))
           return
         }
         console.log('call result: ' + result)
-        this.userData.phoneNumber = this.userModel.phoneNumber
+        this.userData.phoneNumber = JSON.parse(JSON.stringify(this.userModel.phoneNumber))
         this.enable.phoneEditButtons = false
       })
     },
@@ -386,7 +399,7 @@ export default {
       return this.userModel.birthDate
     },
     phoneNumber: function () {
-      return this.userModel.phoneNumber
+      return this.userModel.phoneNumber.mobile + this.userModel.phoneNumber.business + this.userModel.phoneNumber.home
     },
     address: function () {
       return this.userModel.address.line + ' ' +
@@ -417,7 +430,9 @@ export default {
     },
     phoneNumber: function () {
       console.log('phone number changed')
-      if (this.userModel.phoneNumber !== this.userData.phoneNumber) {
+      if ((this.userModel.phoneNumber.mobile !== this.userData.phoneNumber.mobile) ||
+          (this.userModel.phoneNumber.business !== this.userData.phoneNumber.business) ||
+          (this.userModel.phoneNumber.home !== this.userData.phoneNumber.home)) {
         this.enable.phoneEditButtons = true
       } else {
         this.enable.phoneEditButtons = false

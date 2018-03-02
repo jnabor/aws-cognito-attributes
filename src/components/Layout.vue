@@ -8,6 +8,7 @@
     <v-btn icon @click="navDefault()">
       <v-icon class="white--text">home</v-icon>
     </v-btn>
+
     <v-menu  v-if="$store.state.authenticated" bottom left class="mr-4 hidden-sm-and-up">
       <v-btn icon slot="activator">
         <v-icon class="white--text">person</v-icon>
@@ -35,10 +36,8 @@
         </v-list-tile>
       </v-list>
     </v-menu>
-    <v-toolbar-items v-if="!$store.state.authenticated" class="hidden-xs-only">
-      <v-btn class="white--text" @click="navSignIn()" flat>Sign In</v-btn>
-      <v-btn class="white--text mr-4" @click="navRegister()" flat>Register</v-btn>
-    </v-toolbar-items>
+    <v-btn v-if="!$store.state.authenticated" class="hidden-xs-only white--text" @click="navSignIn()" flat>Sign In</v-btn>
+    <v-btn v-if="!$store.state.authenticated" class="hidden-xs-only white--text mr-4" @click="navRegister()" flat>Register</v-btn>
     <v-menu v-if="!$store.state.authenticated" bottom left class="hidden-sm-and-up">
       <v-btn icon slot="activator" >
         <v-icon class="white--text">more_vert</v-icon>

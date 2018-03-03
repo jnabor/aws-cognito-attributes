@@ -16,6 +16,7 @@
   "dependencies": {
     "amazon-cognito-identity-js": "^2.0.0",
     "aws-sdk": "^2.197.0",
+    "country-list": "^1.1.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vuetify": "^1.0.1",

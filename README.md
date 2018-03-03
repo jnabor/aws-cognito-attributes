@@ -1,7 +1,8 @@
-# aws-cognito-vue
+# aws-cognito
 
 ## AUTHENTICATION DEMO
 ## Authentication with AWS Cognito using Vue.js
+### This is a boilerplate project for Vuejs applications using AWS cognito
 
 ### Features
 1. Register with email and password
@@ -9,12 +10,15 @@
 3. Confirmation code verification
 4. Sign In for verified users
 5. Sign Out
-6. Password reset
-7. Default Attributes
-8. Custom Attributes
+6. Password change or reset
+7. Default Attributes (name, email, phone, etc.)
+8. Custom Attributes (other phone numbers, custom addresses, etc.)
 
 ### Live Demo:
 http://auth-cognito-attributes.s3-website-ap-southeast-1.amazonaws.com/home
+
+let me know if you have some questions
+
 
 ## Build Setup
 

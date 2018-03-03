@@ -4,21 +4,22 @@
       <v-flex xl12 lg12 md12 sm12 xs12>
         <v-card class="elevation-0 transparent pa-4 ml-4 mr-4">
           <v-layout row justify-center>
-            <v-flex xl2 lg3 md4 sm4 class="hidden-xs-only">
+            <v-flex xl4 lg4 md4 sm4 class="hidden-xs-only">
               <v-card class="elevation-0 mr-2 transparent">
                 <div class="headline mb-2">User Profile</div>
                 <div class="body-1">Manage your basic information: your name, email, and phone number, etc. Help others find you and make it easier to get in touch.</div>
-                <!-- <v-btn small @click="getAttributes()">Test</v-btn> -->
+                <v-btn small @click="getAttributes()">GET</v-btn>
               </v-card>
             </v-flex>
-            <v-flex xl4 lg5 md6 sm6>
+            <v-flex xl8 lg8 md8 sm8>
               <v-card class="mb-2">
                 <v-card-text class="pl-4 pr-4">
                   <div class="tool a-0 ma-0">
                     <div class="caption mb-1">Name</div>
                     <v-spacer></v-spacer>
                     <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.name = !edit.name">
-                      <v-icon small color="indigo lighten-3">edit</v-icon>
+                      <v-icon v-if="fullName !== '  '" small color="indigo lighten-1">edit</v-icon>
+                      <v-icon v-else small color="indigo lighten-1">mdi-plus-circle-outline</v-icon>
                     </v-btn>
                   </div>
                   <div class="body-2">{{ fullName === '  ' ? '...' : fullName }}</div>
@@ -47,16 +48,23 @@
                 </div>
                 <v-divider></v-divider>
                 <v-card-text class="pl-4 pr-4">
-                  <div class="caption mb-1">Email Address</div>
+                  <div class="caption mb-1">
+                    <v-icon small class="mr-1">email</v-icon>
+                    Email Address
+                  </div>
                   <div class="body-2">{{ userModel.emailAddress === ''? '...' :  userModel.emailAddress }}</div>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-text class="pl-4 pr-4">
                   <div class="tool a-0 ma-0">
-                    <div class="caption mb-1">Birth Date</div>
+                    <div class="caption mb-1">
+                      <v-icon small class="mr-1">date_range</v-icon>
+                      Birth Date
+                    </div>
                     <v-spacer></v-spacer>
                     <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.birthdate = !edit.birthdate">
-                      <v-icon small color="indigo lighten-3">edit</v-icon>
+                      <v-icon v-if="userModel.birthDate !== ''" small color="indigo lighten-1">edit</v-icon>
+                      <v-icon v-else small color="indigo lighten-1">mdi-plus-circle-outline</v-icon>
                     </v-btn>
                   </div>
                   <div class="body-2">{{ userModel.birthDate === ''? '...' : userModel.birthDate }}</div>
@@ -80,15 +88,38 @@
                 <v-divider></v-divider>
                 <v-card-text class="pl-4 pr-4">
                   <div class="tool a-0 ma-0">
-                    <div class="caption mb-1">Phone Number</div>
+                    <div class="caption mb-1">
+                      <v-icon small class="mr-1">phone</v-icon>
+                      Phone Number
+                    </div>
                     <v-spacer></v-spacer>
                     <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.phone = !edit.phone">
-                      <v-icon small color="indigo lighten-3">edit</v-icon>
+                      <v-icon
+                        v-if="userModel.phoneNumber.mobile === '' && userModel.phoneNumber.business === '' && userModel.phoneNumber.home === ''"
+                        small color="indigo lighten-1">
+                        mdi-plus-circle-outline
+                      </v-icon>
+                      <v-icon v-else small color="indigo lighten-1">edit</v-icon>
                     </v-btn>
                   </div>
-                  <div class="body-2">Mobile    {{ userModel.phoneNumber.mobile === ''? '...' :  userModel.phoneNumber.mobile }}</div>
-                  <div class="body-2">Business  {{ userModel.phoneNumber.business === ''? '...' :  userModel.phoneNumber.business }}</div>
-                  <div class="body-2">Home      {{ userModel.phoneNumber.home === ''? '...' :  userModel.phoneNumber.home }}</div>
+                  <v-chip>
+                    <v-avatar>
+                      <v-icon color="amber">mdi-cellphone</v-icon>
+                    </v-avatar>
+                    {{ userModel.phoneNumber.mobile === ''? '...' :  userModel.phoneNumber.mobile }}
+                  </v-chip>
+                  <v-chip>
+                    <v-avatar>
+                      <v-icon color="amber">mdi-deskphone</v-icon>
+                    </v-avatar>
+                    {{ userModel.phoneNumber.business === ''? '...' :  userModel.phoneNumber.business }}
+                  </v-chip>
+                  <v-chip>
+                    <v-avatar>
+                      <v-icon color="amber">mdi-home-variant</v-icon>
+                    </v-avatar>
+                    {{ userModel.phoneNumber.home === ''? '...' :  userModel.phoneNumber.home }}
+                  </v-chip>
                 </v-card-text>
                 <div v-if="edit.phone" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
                   <v-card-text class="indigo lighten-5">
@@ -104,8 +135,6 @@
                       v-model="userModel.phoneNumber.home"
                       label="Home Number">
                     </v-text-field>
-                    Model: {{ userModel.phoneNumber }} <br/>
-                    Data: {{ userData.phoneNumber }} <br/>
                   </v-card-text>
                   <v-card-actions>
                     <v-btn class="ml-4" small :disabled="!enable.phoneEditButtons" @click="cancelEdit('phone')">CANCEL</v-btn>
@@ -117,7 +146,10 @@
                 <v-divider></v-divider>
                 <v-card-text class="pl-4 pr-4">
                   <div class="tool a-0 ma-0">
-                    <div class="caption mb-1">Address</div>
+                    <div class="caption mb-1">
+                      <v-icon small class="mr-1">location_on</v-icon>
+                      Address
+                    </div>
                     <v-spacer></v-spacer>
                     <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.address = !edit.address">
                       <v-icon small color="indigo lighten-3">edit</v-icon>

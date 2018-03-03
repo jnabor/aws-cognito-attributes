@@ -13,12 +13,12 @@ export const store = new Vuex.Store({
   },
   mutations: {
     signOut (state) {
-      console.log('store: signing out')
       state.authenticated = false
       state.token = ''
       state.username = ''
       state.cognitoUser = ''
       state.userPool = []
+      console.log('store: signed out')
     }
   }
 })

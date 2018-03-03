@@ -8,7 +8,7 @@
               <v-card class="elevation-0 mr-2 transparent">
                 <div class="headline mb-2">User Profile</div>
                 <div class="body-1">Manage your basic information: your name, email, and phone number, etc. Help others find you and make it easier to get in touch.</div>
-                <v-btn small @click="getAttributes()">GET</v-btn>
+                <!-- <v-btn small @click="getAttributes()">GET</v-btn> -->
               </v-card>
             </v-flex>
             <v-flex xl8 lg8 md8 sm8>
@@ -104,6 +104,12 @@
                   </div>
                   <v-chip>
                     <v-avatar>
+                      <v-icon color="amber">mdi-cellphone</v-icon>
+                    </v-avatar>
+                    {{ userModel.phoneNumber.mobile === ''? '...' :  userModel.phoneNumber.mobile }}
+                  </v-chip>
+                  <v-chip>
+                    <v-avatar>
                       <v-icon color="amber">mdi-deskphone</v-icon>
                     </v-avatar>
                     {{ userModel.phoneNumber.business === ''? '...' :  userModel.phoneNumber.business }}
@@ -138,7 +144,6 @@
                   </v-card-actions>
                 </div>
                 <v-divider></v-divider>
-
                 <v-card-text class="pl-4 pr-4">
                   <div class="tool a-0 ma-0">
                     <div class="caption mb-1">
@@ -147,14 +152,15 @@
                     </div>
                     <v-spacer></v-spacer>
                     <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.haddress = !edit.haddress">
-                      <v-icon small color="indigo lighten-3">edit</v-icon>
+                      <v-icon v-if="homeAddress !== ''" small color="indigo lighten-1">edit</v-icon>
+                      <v-icon v-else small color="indigo lighten-1">mdi-plus-circle-outline</v-icon>
                     </v-btn>
                   </div>
                   <div class="body-2" v-if="homeAddress === ''">...</div>
                   <div class="body-2" v-else>
                     <div v-if="userModel.homeAddress.line !== ''">{{ userModel.homeAddress.line }}</div>
                     <div v-if="userModel.homeAddress.city + userModel.homeAddress.state + userModel.homeAddress.zipcode + userModel.homeAddress.country !== ''">
-                    {{ userModel.homeAddress.city + ' ' + userModel.homeAddress.state + ' ' + userModel.homeAddress.zipcode + ' ' + userModel.homeAddress.country}}<br />
+                    {{ userModel.homeAddress.city + ' ' + userModel.homeAddress.state + ' ' + userModel.homeAddress.zipcode + ' ' + userModel.homeAddress.country}}
                     </div>
                   </div>
                 </v-card-text>
@@ -200,6 +206,71 @@
                     <v-spacer></v-spacer>
                     <v-btn small  @click="edit.haddress = false" >CLOSE</v-btn>
                     <v-btn class="mr-4" small :disabled="!enable.haddressEditButtons" @click="updateAddress('home_address')" color="success">SAVE</v-btn>
+                  </v-card-actions>
+                </div>
+                <v-divider></v-divider>
+                <v-card-text class="pl-4 pr-4">
+                  <div class="tool a-0 ma-0">
+                    <div class="caption mb-1">
+                      <v-icon small class="mr-1">location_on</v-icon>
+                      Business Address
+                    </div>
+                    <v-spacer></v-spacer>
+                    <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.baddress = !edit.baddress">
+                      <v-icon v-if="businessAddress !== ''" small color="indigo lighten-1">edit</v-icon>
+                      <v-icon v-else small color="indigo lighten-1">mdi-plus-circle-outline</v-icon>
+                    </v-btn>
+                  </div>
+                  <div class="body-2" v-if="businessAddress === ''">...</div>
+                  <div class="body-2" v-else>
+                    <div v-if="userModel.businessAddress.line !== ''">{{ userModel.businessAddress.line }}</div>
+                    <div v-if="userModel.businessAddress.city + userModel.businessAddress.state + userModel.businessAddress.zipcode + userModel.businessAddress.country !== ''">
+                    {{ userModel.businessAddress.city + ' ' + userModel.businessAddress.state + ' ' + userModel.businessAddress.zipcode + ' ' + userModel.businessAddress.country }}
+                    </div>
+                  </div>
+                </v-card-text>
+                <div v-if="edit.baddress" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
+                  <v-card-text class="indigo lighten-5">
+                    <v-text-field
+                      v-model="userModel.businessAddress.line"
+                      label="Address Line">
+                    </v-text-field>
+                    <v-layout row wrap>
+                      <v-flex>
+                        <v-text-field
+                          v-model="userModel.businessAddress.city"
+                          label="Town/City">
+                        </v-text-field>
+                      </v-flex>
+                      <v-flex>
+                        <v-text-field
+                          v-model="userModel.businessAddress.state"
+                          label="Province/State">
+                        </v-text-field>
+                      </v-flex>
+                    </v-layout>
+                    <v-layout row wrap>
+                      <v-flex>
+                        <v-text-field
+                          v-model="userModel.businessAddress.zipcode"
+                          label="Zip Code">
+                        </v-text-field>
+                      </v-flex>
+                      <v-flex >
+                        <v-select
+                          :items="countries"
+                          label="Country"
+                          v-model="userModel.businessAddress.country"
+                          autocomplete>
+                        </v-select>
+                      </v-flex>
+                    </v-layout>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn class="ml-4" small :disabled="!enable.baddressEditButtons" @click="cancelEdit('business_address')">CANCEL</v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn small  @click="edit.baddress = false" >CLOSE</v-btn>
+                    <v-btn class="mr-4" small :disabled="!enable.baddressEditButtons" @click="updateAddress('business_address')" color="success">SAVE</v-btn>
                   </v-card-actions>
                 </div>
               </v-card>
@@ -507,9 +578,9 @@ export default {
           (this.userModel.businessAddress.state !== this.userData.businessAddress.state) ||
           (this.userModel.businessAddress.zipcode !== this.userData.businessAddress.zipcode) ||
           (this.userModel.businessAddress.country !== this.userData.businessAddress.country)) {
-        this.enable.haddressEditButtons = true
+        this.enable.baddressEditButtons = true
       } else {
-        this.enable.haddressEditButtons = false
+        this.enable.baddressEditButtons = false
       }
     }
   },

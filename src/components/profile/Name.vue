@@ -5,12 +5,12 @@
       <div class="caption mb-1">Name</div>
       <v-spacer></v-spacer>
       <v-btn icon flat small class="pa-0 ma-0 topright" @click="showEditView = !showEditView">
-        <v-icon v-if="fullName !== '  '" small color="indigo lighten-1">edit</v-icon>
+        <v-icon v-if="fullNameUp !== '  '" small color="indigo lighten-1">edit</v-icon>
         <v-icon v-else small color="indigo lighten-1">mdi-plus-circle-outline</v-icon>
       </v-btn>
     </div>
-    <div class="body-2">New--- {{ fullName === '  ' ? '...' : fullName }}</div>
-    <div class="body-2">Original--- {{ fullName_ === '  ' ? '...' : fullName_ }}</div>
+    <div class="body-2">New--- {{ fullNameUp === '  ' ? '...' : fullNameUp }}</div>
+    <div class="body-2">Original--- {{ fullNameProp === '  ' ? '...' : fullNameProp }}</div>
   </v-card-text>
   <template v-if="showEditView" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
     <v-card-text class="indigo lighten-5">
@@ -68,21 +68,22 @@ export default {
     }
   },
   computed: {
-    fullName: function () {
+    fullNameUp: function () {
       let fullName = this.nameUpdate.first + ' ' + this.nameUpdate.middle + ' ' + this.nameUpdate.last
       return fullName
     },
-    fullName_: function () {
+    fullNameProp: function () {
       let fullName = this.name.first + ' ' + this.name.middle + ' ' + this.name.last
       return fullName
     }
   },
   watch: {
-    name: function () {
-      console.log('Name: child name change: ' + JSON.stringify(this.name))
+    fullNameProp: function () {
+      console.log('Name: original full name changed')
+      console.log('Name: changed ' + 'update:' + JSON.stringify(this.nameUpdate) + 'name:' + JSON.stringify(this.name))
       this.nameUpdate = JSON.parse(JSON.stringify(this.name))
     },
-    fullName: function () {
+    fullNameUp: function () {
       console.log('Name: name update changed: ' + this.fullName)
       console.log('Name: changed ' + 'update:' + JSON.stringify(this.nameUpdate) + 'name:' + JSON.stringify(this.name))
       if ((this.nameUpdate.first !== this.name.first) ||

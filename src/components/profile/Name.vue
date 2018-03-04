@@ -67,18 +67,13 @@ export default {
   },
   computed: {
     fullNameUp: function () {
-      let fullName = this.nameUpdate.first + ' ' + this.nameUpdate.middle + ' ' + this.nameUpdate.last
-      return fullName
+      return this.nameUpdate.first + ' ' + this.nameUpdate.middle + ' ' + this.nameUpdate.last
     },
     fullNameProp: function () {
-      let fullName = this.name.first + ' ' + this.name.middle + ' ' + this.name.last
-      return fullName
+      return this.name.first + ' ' + this.name.middle + ' ' + this.name.last
     }
   },
   watch: {
-    fullNameProp: function () {
-      this.nameUpdate = JSON.parse(JSON.stringify(this.name))
-    },
     fullNameUp: function () {
       if ((this.nameUpdate.first !== this.name.first) ||
           (this.nameUpdate.middle !== this.name.middle) ||
@@ -87,6 +82,9 @@ export default {
       } else {
         this.enableSave = false
       }
+    },
+    fullNameProp: function () {
+      this.nameUpdate = JSON.parse(JSON.stringify(this.name))
     }
   }
 }

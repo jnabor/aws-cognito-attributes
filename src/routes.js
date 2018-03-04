@@ -7,7 +7,7 @@ import Registered from '@/components/Registered'
 import Forgot from '@/components/Forgot'
 import Confirm from '@/components/Confirm'
 import Changed from '@/components/Changed'
-import Profile from '@/components/profile/Main'
+import Profile from '@/components/Profile/Main'
 
 Vue.use(Router)
 

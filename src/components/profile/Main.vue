@@ -8,8 +8,7 @@
               <v-card class="elevation-0 mr-2 transparent">
                 <div class="headline mb-2">User Profile</div>
                 <div class="body-1">Manage your basic information: your name, email, and phone number, etc. Help others find you and make it easier to get in touch.</div>
-                <v-btn small @click="getAttributes()">GET</v-btn>
-                  {{ userModel.birthDate }}
+                <!-- <v-btn small @click="getAttributes()">GET</v-btn> -->
               </v-card>
             </v-flex>
             <v-flex xl8 lg8 md8 sm8>
@@ -33,64 +32,12 @@
                 </app-birth-date>
                 <v-divider></v-divider>
 
-                <v-card-text class="pl-4 pr-4">
-                  <div class="tool a-0 ma-0">
-                    <div class="caption mb-1">
-                      <v-icon small class="mr-1">phone</v-icon>
-                      Phone Number
-                    </div>
-                    <v-spacer></v-spacer>
-                    <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.phone = !edit.phone">
-                      <v-icon
-                        v-if="userModel.phoneNumber.mobile === '' && userModel.phoneNumber.business === '' && userModel.phoneNumber.home === ''"
-                        small color="indigo lighten-1">
-                        mdi-plus-circle-outline
-                      </v-icon>
-                      <v-icon v-else small color="indigo lighten-1">edit</v-icon>
-                    </v-btn>
-                  </div>
-                  <v-chip>
-                    <v-avatar>
-                      <v-icon color="amber">mdi-cellphone</v-icon>
-                    </v-avatar>
-                    {{ userModel.phoneNumber.mobile === ''? '...' :  userModel.phoneNumber.mobile }}
-                  </v-chip>
-                  <v-chip>
-                    <v-avatar>
-                      <v-icon color="amber">mdi-deskphone</v-icon>
-                    </v-avatar>
-                    {{ userModel.phoneNumber.business === ''? '...' :  userModel.phoneNumber.business }}
-                  </v-chip>
-                  <v-chip>
-                    <v-avatar>
-                      <v-icon color="amber">mdi-home-variant</v-icon>
-                    </v-avatar>
-                    {{ userModel.phoneNumber.home === ''? '...' :  userModel.phoneNumber.home }}
-                  </v-chip>
-                </v-card-text>
-                <div v-if="edit.phone" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
-                  <v-card-text class="indigo lighten-5">
-                    <v-text-field
-                      v-model="userModel.phoneNumber.mobile"
-                      label="Mobile Number">
-                    </v-text-field>
-                    <v-text-field
-                      v-model="userModel.phoneNumber.business"
-                      label="Business Number">
-                    </v-text-field>
-                    <v-text-field
-                      v-model="userModel.phoneNumber.home"
-                      label="Home Number">
-                    </v-text-field>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-btn class="ml-4" small :disabled="!enable.phoneEditButtons" @click="cancelEdit('phone')">CANCEL</v-btn>
-                    <v-spacer></v-spacer>
-                    <v-btn small  @click="edit.phone = false" >CLOSE</v-btn>
-                    <v-btn class="mr-4" small :disabled="!enable.phoneEditButtons" @click="updatePhone()" color="success">SAVE</v-btn>
-                  </v-card-actions>
-                </div>
+                <app-phone-number
+                  :phone="userModel.phoneNumber"
+                  @updatePhoneNumber="updatePhone($event)">
+                </app-phone-number>
                 <v-divider></v-divider>
+
                 <v-card-text class="pl-4 pr-4">
                   <div class="tool a-0 ma-0">
                     <div class="caption mb-1">
@@ -233,6 +180,7 @@
 import userName from './name.vue'
 import userEmail from './email.vue'
 import birthDate from './birthdate.vue'
+import phoneNumber from './phone.vue'
 import router from '../../routes'
 var AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 var countries = require('country-list')()
@@ -241,19 +189,18 @@ export default {
   components: {
     'app-user-name': userName,
     'app-user-email': userEmail,
-    'app-birth-date': birthDate
+    'app-birth-date': birthDate,
+    'app-phone-number': phoneNumber
   },
   data: function () {
     return {
       menu: false,
       modal: false,
       edit: {
-        phone: false,
         haddress: false,
         baddress: false
       },
       enable: {
-        phoneEditButtons: false,
         haddressEditButtons: false,
         baddressEditButtons: false
       },
@@ -286,11 +233,6 @@ export default {
         }
       },
       userData: {
-        phoneNumber: {
-          mobile: '',
-          business: '',
-          home: ''
-        },
         homeAddress: {
           line: '',
           city: '',
@@ -336,7 +278,6 @@ export default {
         } else if (attribute.Name === 'email') {
           this.userModel.emailAddress = attribute.Value
         } else if (attribute.Name === 'custom:phone_numbers') {
-          this.userData.phoneNumber = JSON.parse(attribute.Value)
           this.userModel.phoneNumber = JSON.parse(attribute.Value)
         } else if (attribute.Name === 'custom:home_address') {
           this.userModel.homeAddress = JSON.parse(attribute.Value)
@@ -403,10 +344,10 @@ export default {
         this.userModel.birthDate = date
       })
     },
-    updatePhone: function () {
+    updatePhone: function (phone) {
       console.log('updating phone number...')
       var attributeList = []
-      var phoneNumbers = JSON.stringify(this.userModel.phoneNumber)
+      var phoneNumbers = JSON.stringify(phone)
       console.log('saving numbers :' + phoneNumbers)
       var attributePhoneNumber = { Name: 'custom:phone_numbers', Value: phoneNumbers }
       var phoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(attributePhoneNumber)
@@ -417,8 +358,7 @@ export default {
           return
         }
         console.log('call result: ' + result)
-        this.userData.phoneNumber = JSON.parse(JSON.stringify(this.userModel.phoneNumber))
-        this.enable.phoneEditButtons = false
+        this.userModel.phoneNumber = JSON.parse(JSON.stringify(phone))
       })
     },
     updateAddress: function (type) {
@@ -452,9 +392,6 @@ export default {
     }
   },
   computed: {
-    phoneNumber: function () {
-      return this.userModel.phoneNumber.mobile + this.userModel.phoneNumber.business + this.userModel.phoneNumber.home
-    },
     homeAddress: function () {
       return this.userModel.homeAddress.line + this.userModel.homeAddress.city + this.userModel.homeAddress.state + this.userModel.homeAddress.zipcode + this.userModel.homeAddress.country
     },
@@ -463,16 +400,6 @@ export default {
     }
   },
   watch: {
-    phoneNumber: function () {
-      console.log('phone number changed')
-      if ((this.userModel.phoneNumber.mobile !== this.userData.phoneNumber.mobile) ||
-          (this.userModel.phoneNumber.business !== this.userData.phoneNumber.business) ||
-          (this.userModel.phoneNumber.home !== this.userData.phoneNumber.home)) {
-        this.enable.phoneEditButtons = true
-      } else {
-        this.enable.phoneEditButtons = false
-      }
-    },
     homeAddress: function () {
       console.log('address changed')
       if ((this.userModel.homeAddress.line !== this.userData.homeAddress.line) ||
@@ -502,7 +429,6 @@ export default {
     if (this.$store.state.authenticated === true) {
       this.getAttributes()
     }
-    this.enable.phoneEditButtons = false
     this.enable.haddressEditButtons = false
     this.enable.baddressEditButtons = false
   }
@@ -514,7 +440,6 @@ export default {
     padding: 0px;
     margin: 0px;
 }
-
 .topright {
     position: absolute;
     top: 0px;

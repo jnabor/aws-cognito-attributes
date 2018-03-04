@@ -20,7 +20,7 @@
       </div>
     </div>
   </v-card-text>
-  <template v-if="showEditView" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
+  <div v-if="showEditView" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
     <v-card-text class="indigo lighten-5">
       <v-text-field
         v-model="addressUpdate.line"
@@ -63,7 +63,7 @@
       <v-btn small  @click="closeEdit()" >CLOSE</v-btn>
       <v-btn class="mr-4" small :disabled="!enableSave" @click="updateAttribute()" color="success">SAVE</v-btn>
     </v-card-actions>
-  </template>
+  </div>
 </div>
 </template>
 

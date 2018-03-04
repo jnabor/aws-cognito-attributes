@@ -38,135 +38,19 @@
                 </app-phone-number>
                 <v-divider></v-divider>
 
-                <v-card-text class="pl-4 pr-4">
-                  <div class="tool a-0 ma-0">
-                    <div class="caption mb-1">
-                      <v-icon small class="mr-1">location_on</v-icon>
-                      Home Address
-                    </div>
-                    <v-spacer></v-spacer>
-                    <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.haddress = !edit.haddress">
-                      <v-icon v-if="homeAddress !== ''" small color="indigo lighten-1">edit</v-icon>
-                      <v-icon v-else small color="indigo lighten-1">mdi-plus-circle-outline</v-icon>
-                    </v-btn>
-                  </div>
-                  <div class="body-2" v-if="homeAddress === ''">...</div>
-                  <div class="body-2" v-else>
-                    <div v-if="userModel.homeAddress.line !== ''">{{ userModel.homeAddress.line }}</div>
-                    <div v-if="userModel.homeAddress.city + userModel.homeAddress.state + userModel.homeAddress.zipcode + userModel.homeAddress.country !== ''">
-                    {{ userModel.homeAddress.city + ' ' + userModel.homeAddress.state + ' ' + userModel.homeAddress.zipcode + ' ' + userModel.homeAddress.country}}
-                    </div>
-                  </div>
-                </v-card-text>
-                <div v-if="edit.haddress" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
-                  <v-card-text class="indigo lighten-5">
-                    <v-text-field
-                      v-model="userModel.homeAddress.line"
-                      label="Address Line">
-                    </v-text-field>
-                    <v-layout row wrap>
-                      <v-flex>
-                        <v-text-field
-                          v-model="userModel.homeAddress.city"
-                          label="Town/City">
-                        </v-text-field>
-                      </v-flex>
-                      <v-flex>
-                        <v-text-field
-                          v-model="userModel.homeAddress.state"
-                          label="Province/State">
-                        </v-text-field>
-                      </v-flex>
-                    </v-layout>
-                    <v-layout row wrap>
-                      <v-flex>
-                        <v-text-field
-                          v-model="userModel.homeAddress.zipcode"
-                          label="Zip Code">
-                        </v-text-field>
-                      </v-flex>
-                      <v-flex >
-                        <v-select
-                          :items="countries"
-                          label="Country"
-                          v-model="userModel.homeAddress.country"
-                          autocomplete>
-                        </v-select>
-                      </v-flex>
-                    </v-layout>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-btn class="ml-4" small :disabled="!enable.haddressEditButtons" @click="cancelEdit('home_address')">CANCEL</v-btn>
-                    <v-spacer></v-spacer>
-                    <v-btn small  @click="edit.haddress = false" >CLOSE</v-btn>
-                    <v-btn class="mr-4" small :disabled="!enable.haddressEditButtons" @click="updateAddress('home_address')" color="success">SAVE</v-btn>
-                  </v-card-actions>
-                </div>
+                <app-address
+                  :address="userModel.homeAddress"
+                  :caption="'Home Address'"
+                  @updateAddress="updateAddress($event, 'home')">
+                </app-address>
                 <v-divider></v-divider>
-                <v-card-text class="pl-4 pr-4">
-                  <div class="tool a-0 ma-0">
-                    <div class="caption mb-1">
-                      <v-icon small class="mr-1">location_on</v-icon>
-                      Business Address
-                    </div>
-                    <v-spacer></v-spacer>
-                    <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.baddress = !edit.baddress">
-                      <v-icon v-if="businessAddress !== ''" small color="indigo lighten-1">edit</v-icon>
-                      <v-icon v-else small color="indigo lighten-1">mdi-plus-circle-outline</v-icon>
-                    </v-btn>
-                  </div>
-                  <div class="body-2" v-if="businessAddress === ''">...</div>
-                  <div class="body-2" v-else>
-                    <div v-if="userModel.businessAddress.line !== ''">{{ userModel.businessAddress.line }}</div>
-                    <div v-if="userModel.businessAddress.city + userModel.businessAddress.state + userModel.businessAddress.zipcode + userModel.businessAddress.country !== ''">
-                    {{ userModel.businessAddress.city + ' ' + userModel.businessAddress.state + ' ' + userModel.businessAddress.zipcode + ' ' + userModel.businessAddress.country }}
-                    </div>
-                  </div>
-                </v-card-text>
-                <div v-if="edit.baddress" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
-                  <v-card-text class="indigo lighten-5">
-                    <v-text-field
-                      v-model="userModel.businessAddress.line"
-                      label="Address Line">
-                    </v-text-field>
-                    <v-layout row wrap>
-                      <v-flex>
-                        <v-text-field
-                          v-model="userModel.businessAddress.city"
-                          label="Town/City">
-                        </v-text-field>
-                      </v-flex>
-                      <v-flex>
-                        <v-text-field
-                          v-model="userModel.businessAddress.state"
-                          label="Province/State">
-                        </v-text-field>
-                      </v-flex>
-                    </v-layout>
-                    <v-layout row wrap>
-                      <v-flex>
-                        <v-text-field
-                          v-model="userModel.businessAddress.zipcode"
-                          label="Zip Code">
-                        </v-text-field>
-                      </v-flex>
-                      <v-flex >
-                        <v-select
-                          :items="countries"
-                          label="Country"
-                          v-model="userModel.businessAddress.country"
-                          autocomplete>
-                        </v-select>
-                      </v-flex>
-                    </v-layout>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-btn class="ml-4" small :disabled="!enable.baddressEditButtons" @click="cancelEdit('business_address')">CANCEL</v-btn>
-                    <v-spacer></v-spacer>
-                    <v-btn small  @click="edit.baddress = false" >CLOSE</v-btn>
-                    <v-btn class="mr-4" small :disabled="!enable.baddressEditButtons" @click="updateAddress('business_address')" color="success">SAVE</v-btn>
-                  </v-card-actions>
-                </div>
+
+                <app-address
+                  :address="userModel.businessAddress"
+                  :caption="'Business Address'"
+                  @updateAddress="updateAddress($event, 'business')">
+                </app-address>
+
               </v-card>
             </v-flex>
           </v-layout>
@@ -181,16 +65,16 @@ import userName from './name.vue'
 import userEmail from './email.vue'
 import birthDate from './birthdate.vue'
 import phoneNumber from './phone.vue'
-import router from '../../routes'
+import address from './address.vue'
 var AmazonCognitoIdentity = require('amazon-cognito-identity-js')
-var countries = require('country-list')()
 
 export default {
   components: {
     'app-user-name': userName,
     'app-user-email': userEmail,
     'app-birth-date': birthDate,
-    'app-phone-number': phoneNumber
+    'app-phone-number': phoneNumber,
+    'app-address': address
   },
   data: function () {
     return {
@@ -247,8 +131,7 @@ export default {
           zipcode: '',
           country: ''
         }
-      },
-      countries: countries.getNames()
+      }
     }
   },
   methods: {
@@ -281,28 +164,10 @@ export default {
           this.userModel.phoneNumber = JSON.parse(attribute.Value)
         } else if (attribute.Name === 'custom:home_address') {
           this.userModel.homeAddress = JSON.parse(attribute.Value)
-          this.userData.homeAddress = JSON.parse(attribute.Value)
         } else if (attribute.Name === 'custom:business_address') {
           this.userModel.businessAddress = JSON.parse(attribute.Value)
-          this.userData.businessAddress = JSON.parse(attribute.Value)
         }
         console.log('property:' + attribute.Name + ' value:' + attribute.Value)
-      }
-    },
-    navSignOut: function () {
-      console.log('signing out')
-      this.$store.state.authenticated = false
-      router.push('/home')
-    },
-    cancelEdit: function (field) {
-      if (field === 'date') {
-        this.userModel.birthDate = this.userData.birthDate
-      } else if (field === 'phone') {
-        this.userModel.phoneNumber = JSON.parse(JSON.stringify(this.userData.phoneNumber))
-      } else if (field === 'home_address') {
-        this.userModel.homeAddress = JSON.parse(JSON.stringify(this.userData.homeAddress))
-      } else if (field === 'business_address') {
-        this.userModel.businessAddress = JSON.parse(JSON.stringify(this.userData.businessAddress))
       }
     },
     updateName: function (data) {
@@ -361,16 +226,18 @@ export default {
         this.userModel.phoneNumber = JSON.parse(JSON.stringify(phone))
       })
     },
-    updateAddress: function (type) {
+    updateAddress: function (newAddress, type) {
       console.log('updating address...')
-      var attributeList = []
-      var addressJSON
-      if (type === 'home_address') {
-        addressJSON = JSON.stringify(this.userModel.homeAddress)
+      let attributeList = []
+      let addressJSON = ''
+      if (type === 'home') {
+        addressJSON = JSON.stringify(newAddress)
+      } else if (type === 'business') {
+        addressJSON = JSON.stringify(newAddress)
       } else {
-        addressJSON = JSON.stringify(this.userModel.businessAddress)
+        return
       }
-      var attributeAddress = { Name: 'custom:' + type, Value: addressJSON }
+      var attributeAddress = { Name: 'custom:' + type + '_address', Value: addressJSON }
       var address = new AmazonCognitoIdentity.CognitoUserAttribute(attributeAddress)
       attributeList.push(address)
       this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
@@ -379,14 +246,12 @@ export default {
           return
         }
         console.log('call result: ' + result)
-        if (type === 'home_address') {
+        if (type === 'home') {
           console.log('home address updated')
-          this.userData.homeAddress = JSON.parse(JSON.stringify(this.userModel.homeAddress))
-          this.enable.haddressEditButtons = false
-        } else {
+          this.userModel.homeAddress = JSON.parse(JSON.stringify(newAddress))
+        } else if (type === 'business') {
           console.log('business address updated')
-          this.userData.businessAddress = JSON.parse(JSON.stringify(this.userModel.businessAddress))
-          this.enable.baddressEditButtons = false
+          this.userModel.businessAddress = JSON.parse(JSON.stringify(newAddress))
         }
       })
     }
@@ -429,8 +294,6 @@ export default {
     if (this.$store.state.authenticated === true) {
       this.getAttributes()
     }
-    this.enable.haddressEditButtons = false
-    this.enable.baddressEditButtons = false
   }
 }
 </script>

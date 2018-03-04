@@ -54,7 +54,6 @@ export default {
   },
   methods: {
     cancelEdit: function () {
-      console.log('Name: cancelling...')
       this.nameUpdate = JSON.parse(JSON.stringify(this.name))
     },
     closeEdit: function () {
@@ -62,7 +61,6 @@ export default {
       this.showEditView = false
     },
     updateAttribute: function () {
-      console.log('Name: updating...')
       this.$emit('updateName', this.nameUpdate)
       this.enableSave = false
     }
@@ -79,13 +77,9 @@ export default {
   },
   watch: {
     fullNameProp: function () {
-      console.log('Name: original full name changed')
-      console.log('Name: changed ' + 'update:' + JSON.stringify(this.nameUpdate) + 'name:' + JSON.stringify(this.name))
       this.nameUpdate = JSON.parse(JSON.stringify(this.name))
     },
     fullNameUp: function () {
-      console.log('Name: name update changed: ' + this.fullName)
-      console.log('Name: changed ' + 'update:' + JSON.stringify(this.nameUpdate) + 'name:' + JSON.stringify(this.name))
       if ((this.nameUpdate.first !== this.name.first) ||
           (this.nameUpdate.middle !== this.name.middle) ||
           (this.nameUpdate.last !== this.name.last)) {
@@ -97,7 +91,6 @@ export default {
   }
 }
 </script>
-
 <style scoped>
 .tool {
     position: relative;

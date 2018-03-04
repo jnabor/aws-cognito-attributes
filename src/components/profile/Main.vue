@@ -20,15 +20,13 @@
                 </app-user-name>
                 <v-divider></v-divider>
 
-                <v-card-text class="pl-4 pr-4">
-                  <div class="caption mb-1">
-                    <v-icon small class="mr-1">email</v-icon>
-                    Email Address
-                  </div>
-                  <div class="body-2">{{ userModel.emailAddress === ''? '...' :  userModel.emailAddress }}</div>
-                </v-card-text>
+                <app-user-email
+                  :email="userModel.email"
+                  @updateEmail="updateEmail($event)">
+                </app-user-email>
                 <v-divider></v-divider>
-                <v-card-text class="pl-4 pr-4">
+
+                  <v-card-text class="pl-4 pr-4">
                   <div class="tool a-0 ma-0">
                     <div class="caption mb-1">
                       <v-icon small class="mr-1">date_range</v-icon>
@@ -256,28 +254,28 @@
 </template>
 
 <script>
-import userName from './Name.vue'
+import userName from './name.vue'
+import userEmail from './email.vue'
 import router from '../../routes'
 var AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 var countries = require('country-list')()
 
 export default {
   components: {
-    'app-user-name': userName
+    'app-user-name': userName,
+    'app-user-email': userEmail
   },
   data: function () {
     return {
       menu: false,
       modal: false,
       edit: {
-        name: false,
         birthdate: false,
         phone: false,
         haddress: false,
         baddress: false
       },
       enable: {
-        nameEditButtons: false,
         dateEditButtons: false,
         phoneEditButtons: false,
         haddressEditButtons: false,
@@ -312,7 +310,6 @@ export default {
       },
       userData: {
         birthdate: '',
-        emailAddress: '',
         phoneNumber: {
           mobile: '',
           business: '',
@@ -362,7 +359,6 @@ export default {
           this.enable.dateEditButtons = false
         } else if (attribute.Name === 'email') {
           this.userModel.emailAddress = attribute.Value
-          this.userData.emailAddress = attribute.Value
         } else if (attribute.Name === 'custom:phone_numbers') {
           this.userData.phoneNumber = JSON.parse(attribute.Value)
           this.userModel.phoneNumber = JSON.parse(attribute.Value)
@@ -435,7 +431,6 @@ export default {
     updatePhone: function () {
       console.log('updating phone number...')
       var attributeList = []
-      // pack all phone numbers in JSON
       var phoneNumbers = JSON.stringify(this.userModel.phoneNumber)
       console.log('saving numbers :' + phoneNumbers)
       var attributePhoneNumber = { Name: 'custom:phone_numbers', Value: phoneNumbers }
@@ -543,16 +538,14 @@ export default {
     if (this.$store.state.authenticated === true) {
       this.getAttributes()
     }
-    this.enable.nameEditButtons = false
     this.enable.dateEditButtons = false
     this.enable.phoneEditButtons = false
-    this.enable.addressEditButtons = false
+    this.enable.haddressEditButtons = false
+    this.enable.baddressEditButtons = false
   }
 }
 </script>
-
 <style scoped>
-
 .tool {
     position: relative;
     padding: 0px;

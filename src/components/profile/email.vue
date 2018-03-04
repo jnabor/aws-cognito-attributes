@@ -5,7 +5,7 @@
       <v-icon small class="mr-1">email</v-icon>
       Email Address
     </div>
-    <div class="body-2">{{ emailAddressUp === '  ' ? '...' : emailAddressUp }}</div>
+    <div class="body-2">{{ emailUp === '  ' ? '...' : emailUp }}</div>
   </v-card-text>
 </div>
 </template>
@@ -30,12 +30,13 @@ export default {
     closeEdit: function () {
       this.cancelEdit()
       this.showEditView = false
-    },
-    updateAttribute: function () {
-      console.log('email: updating...')
-      this.$emit('updateEmail', this.nameUpdate)
-      this.enableSave = false
     }
+    // email update done by system
+    // updateAttribute: function () {
+    //   console.log('email: updating...')
+    //  this.$emit('updateEmail', this.nameUpdate)
+    //  this.enableSave = false
+    // }
   },
   computed: {
     emailUp: function () {
@@ -47,9 +48,7 @@ export default {
   },
   watch: {
     emailUp: function () {
-      if ((this.nameUpdate.first !== this.name.first) ||
-          (this.nameUpdate.middle !== this.name.middle) ||
-          (this.nameUpdate.last !== this.name.last)) {
+      if (this.emailUpdate !== this.email) {
         this.enableSave = true
       } else {
         this.enableSave = false

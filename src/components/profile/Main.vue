@@ -21,8 +21,7 @@
                 <v-divider></v-divider>
 
                 <app-user-email
-                  :email="userModel.email"
-                  @updateEmail="updateEmail($event)">
+                  :email="userModel.emailAddress">
                 </app-user-email>
                 <v-divider></v-divider>
 

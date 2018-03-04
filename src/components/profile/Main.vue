@@ -18,41 +18,8 @@
                   :name="userModel.name"
                   @updateName="updateName($event)">
                 </app-user-name>
-
-                <v-card-text class="pl-4 pr-4">
-                  <div class="tool a-0 ma-0">
-                    <div class="caption mb-1">Name</div>
-                    <v-spacer></v-spacer>
-                    <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.name = !edit.name">
-                      <v-icon v-if="fullName !== '  '" small color="indigo lighten-1">edit</v-icon>
-                      <v-icon v-else small color="indigo lighten-1">mdi-plus-circle-outline</v-icon>
-                    </v-btn>
-                  </div>
-                  <div class="body-2">{{ fullName === '  ' ? '...' : fullName }}</div>
-                </v-card-text>
-                <div v-if="edit.name" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
-                  <v-card-text class="indigo lighten-5">
-                    <v-text-field
-                      v-model="userModel.firstName"
-                      label="First Name">
-                    </v-text-field>
-                    <v-text-field
-                      v-model="userModel.middleName"
-                      label="Middle Name">
-                    </v-text-field>
-                    <v-text-field
-                      v-model="userModel.lastName"
-                      label="Last Name">
-                    </v-text-field>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-btn class="ml-4" small :disabled="!enable.nameEditButtons" @click="cancelEdit('name')">CANCEL</v-btn>
-                    <v-spacer></v-spacer>
-                    <v-btn small  @click="edit.name = false" >CLOSE</v-btn>
-                    <v-btn class="mr-4" small :disabled="!enable.nameEditButtons" @click="updateName_()" color="success">SAVE</v-btn>
-                  </v-card-actions>
-                </div>
                 <v-divider></v-divider>
+
                 <v-card-text class="pl-4 pr-4">
                   <div class="caption mb-1">
                     <v-icon small class="mr-1">email</v-icon>
@@ -322,10 +289,6 @@ export default {
           middle: '',
           last: ''
         },
-        firstName: '',
-        middleName: '',
-        lastName: '',
-        birthDate: '',
         emailAddress: '',
         phoneNumber: {
           mobile: '',
@@ -348,9 +311,6 @@ export default {
         }
       },
       userData: {
-        firstName: '',
-        middleName: '',
-        lastName: '',
         birthdate: '',
         emailAddress: '',
         phoneNumber: {
@@ -391,16 +351,10 @@ export default {
       console.log('mapping attributes...')
       for (let attribute of result) {
         if (attribute.Name === 'given_name') {
-          this.userModel.firstName = attribute.Value
-          this.userData.firstName = attribute.Value
           this.userModel.name.first = attribute.Value
         } else if (attribute.Name === 'middle_name') {
-          this.userModel.middleName = attribute.Value
-          this.userData.middleName = attribute.Value
           this.userModel.name.middle = attribute.Value
         } else if (attribute.Name === 'family_name') {
-          this.userModel.lastName = attribute.Value
-          this.userData.lastName = attribute.Value
           this.userModel.name.last = attribute.Value
         } else if (attribute.Name === 'birthdate') {
           this.userModel.birthDate = attribute.Value
@@ -428,11 +382,7 @@ export default {
       router.push('/home')
     },
     cancelEdit: function (field) {
-      if (field === 'name') {
-        this.userModel.firstName = this.userData.firstName
-        this.userModel.middleName = this.userData.middleName
-        this.userModel.lastName = this.userData.lastName
-      } else if (field === 'date') {
+      if (field === 'date') {
         this.userModel.birthDate = this.userData.birthDate
       } else if (field === 'phone') {
         this.userModel.phoneNumber = JSON.parse(JSON.stringify(this.userData.phoneNumber))
@@ -444,19 +394,13 @@ export default {
     },
     updateName: function (data) {
       console.log('updating name...')
-      console.log(data.first)
-      console.log(data.middle)
-      console.log(data.last)
-    },
-    updateName_: function () {
-      console.log('updating name...')
-      var attributeList = []
-      var attributeFirstName = { Name: 'given_name', Value: this.userModel.firstName }
-      var attributeMiddleName = { Name: 'middle_name', Value: this.userModel.middleName }
-      var attributeLastName = { Name: 'family_name', Value: this.userModel.lastName }
-      var firstName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeFirstName)
-      var middleName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeMiddleName)
-      var lastName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeLastName)
+      let attributeList = []
+      let attributeFirstName = { Name: 'given_name', Value: data.first }
+      let attributeMiddleName = { Name: 'middle_name', Value: data.middle }
+      let attributeLastName = { Name: 'family_name', Value: data.last }
+      let firstName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeFirstName)
+      let middleName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeMiddleName)
+      let lastName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeLastName)
       attributeList.push(firstName)
       attributeList.push(middleName)
       attributeList.push(lastName)
@@ -466,13 +410,10 @@ export default {
           return
         }
         console.log('call result: ' + result)
-        this.userData.firstName = this.userModel.firstName
-        this.userData.middleName = this.userModel.middleName
-        this.userData.lastName = this.userModel.lastName
+        this.userModel.name.first = data.first
+        this.userModel.name.middle = data.middle
+        this.userModel.name.last = data.last
         this.enable.nameEditButtons = false
-        this.userModel.name.first = this.userModel.firstName
-        this.userModel.name.middle = this.userModel.middleName
-        this.userModel.name.last = this.userModel.middleName
       })
     },
     updateDate: function () {
@@ -541,9 +482,6 @@ export default {
     }
   },
   computed: {
-    fullName: function () {
-      return this.userModel.firstName + ' ' + this.userModel.middleName + ' ' + this.userModel.lastName
-    },
     birthDate: function () {
       return this.userModel.birthDate
     },
@@ -558,16 +496,6 @@ export default {
     }
   },
   watch: {
-    fullName: function () {
-      console.log('name changed')
-      if ((this.userModel.firstName !== this.userData.firstName) ||
-          (this.userModel.middleName !== this.userData.middleName) ||
-          (this.userModel.lastName !== this.userData.lastName)) {
-        this.enable.nameEditButtons = true
-      } else {
-        this.enable.nameEditButtons = false
-      }
-    },
     birthDate: function () {
       console.log('birthdate changed')
       if (this.userModel.birthDate !== this.userData.birthDate) {

@@ -9,8 +9,7 @@
         <v-icon v-else small color="indigo lighten-1">mdi-plus-circle-outline</v-icon>
       </v-btn>
     </div>
-    <div class="body-2">New--- {{ fullNameUp === '  ' ? '...' : fullNameUp }}</div>
-    <div class="body-2">Original--- {{ fullNameProp === '  ' ? '...' : fullNameProp }}</div>
+    <div class="body-2">{{ fullNameUp === '  ' ? '...' : fullNameUp }}</div>
   </v-card-text>
   <template v-if="showEditView" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
     <v-card-text class="indigo lighten-5">
@@ -65,6 +64,7 @@ export default {
     updateAttribute: function () {
       console.log('Name: updating...')
       this.$emit('updateName', this.nameUpdate)
+      this.enableSave = false
     }
   },
   computed: {

@@ -78,16 +78,6 @@ export default {
   },
   data: function () {
     return {
-      menu: false,
-      modal: false,
-      edit: {
-        haddress: false,
-        baddress: false
-      },
-      enable: {
-        haddressEditButtons: false,
-        baddressEditButtons: false
-      },
       userModel: {
         name: {
           first: '',
@@ -101,22 +91,6 @@ export default {
           business: '',
           home: ''
         },
-        homeAddress: {
-          line: '',
-          city: '',
-          state: '',
-          zipcode: '',
-          country: ''
-        },
-        businessAddress: {
-          line: '',
-          city: '',
-          state: '',
-          zipcode: '',
-          country: ''
-        }
-      },
-      userData: {
         homeAddress: {
           line: '',
           city: '',
@@ -156,8 +130,6 @@ export default {
           this.userModel.name.last = attribute.Value
         } else if (attribute.Name === 'birthdate') {
           this.userModel.birthDate = attribute.Value
-          this.userData.birthDate = attribute.Value
-          this.enable.dateEditButtons = false
         } else if (attribute.Name === 'email') {
           this.userModel.emailAddress = attribute.Value
         } else if (attribute.Name === 'custom:phone_numbers') {
@@ -254,40 +226,6 @@ export default {
           this.userModel.businessAddress = JSON.parse(JSON.stringify(newAddress))
         }
       })
-    }
-  },
-  computed: {
-    homeAddress: function () {
-      return this.userModel.homeAddress.line + this.userModel.homeAddress.city + this.userModel.homeAddress.state + this.userModel.homeAddress.zipcode + this.userModel.homeAddress.country
-    },
-    businessAddress: function () {
-      return this.userModel.businessAddress.line + this.userModel.businessAddress.city + this.userModel.businessAddress.state + this.userModel.businessAddress.zipcode + this.userModel.businessAddress.country
-    }
-  },
-  watch: {
-    homeAddress: function () {
-      console.log('address changed')
-      if ((this.userModel.homeAddress.line !== this.userData.homeAddress.line) ||
-          (this.userModel.homeAddress.city !== this.userData.homeAddress.city) ||
-          (this.userModel.homeAddress.state !== this.userData.homeAddress.state) ||
-          (this.userModel.homeAddress.zipcode !== this.userData.homeAddress.zipcode) ||
-          (this.userModel.homeAddress.country !== this.userData.homeAddress.country)) {
-        this.enable.haddressEditButtons = true
-      } else {
-        this.enable.haddressEditButtons = false
-      }
-    },
-    businessAddress: function () {
-      console.log('address changed')
-      if ((this.userModel.businessAddress.line !== this.userData.businessAddress.line) ||
-          (this.userModel.businessAddress.city !== this.userData.businessAddress.city) ||
-          (this.userModel.businessAddress.state !== this.userData.businessAddress.state) ||
-          (this.userModel.businessAddress.zipcode !== this.userData.businessAddress.zipcode) ||
-          (this.userModel.businessAddress.country !== this.userData.businessAddress.country)) {
-        this.enable.baddressEditButtons = true
-      } else {
-        this.enable.baddressEditButtons = false
-      }
     }
   },
   beforeMount: function () {

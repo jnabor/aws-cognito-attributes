@@ -9,6 +9,7 @@
                 <div class="headline mb-2">User Profile</div>
                 <div class="body-1">Manage your basic information: your name, email, and phone number, etc. Help others find you and make it easier to get in touch.</div>
                 <v-btn small @click="getAttributes()">GET</v-btn>
+                  {{ userModel.birthDate }}
               </v-card>
             </v-flex>
             <v-flex xl8 lg8 md8 sm8>
@@ -25,37 +26,13 @@
                 </app-user-email>
                 <v-divider></v-divider>
 
-                  <v-card-text class="pl-4 pr-4">
-                  <div class="tool a-0 ma-0">
-                    <div class="caption mb-1">
-                      <v-icon small class="mr-1">date_range</v-icon>
-                      Birth Date
-                    </div>
-                    <v-spacer></v-spacer>
-                    <v-btn icon flat small class="pa-0 ma-0 topright" @click="edit.birthdate = !edit.birthdate">
-                      <v-icon v-if="userModel.birthDate !== ''" small color="indigo lighten-1">edit</v-icon>
-                      <v-icon v-else small color="indigo lighten-1">mdi-plus-circle-outline</v-icon>
-                    </v-btn>
-                  </div>
-                  <div class="body-2">{{ userModel.birthDate === ''? '...' : userModel.birthDate }}</div>
-                </v-card-text>
-                <div v-if="edit.birthdate" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
-                  <v-card-text class="pl-4 pr-4">
-                    <v-date-picker
-                      full-width
-                      class="mb-3 grey lighten-4 black--text"
-                      v-model="userModel.birthDate"
-                      :max="new Date().toISOString().substr(0, 10)">
-                    </v-date-picker>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-btn class="ml-4" small :disabled="!enable.dateEditButtons" @click="cancelEdit('date')">CANCEL</v-btn>
-                    <v-spacer></v-spacer>
-                    <v-btn small  @click="edit.birthdate = false" >CLOSE</v-btn>
-                    <v-btn class="mr-4" small :disabled="!enable.dateEditButtons" @click="updateDate()" color="success">SAVE</v-btn>
-                  </v-card-actions>
-                </div>
+                <app-birth-date
+                  :birthdate="userModel.birthDate"
+                  :caption="'Birth Date'"
+                  @updateBirthDate="updateBirthDate($event)">
+                </app-birth-date>
                 <v-divider></v-divider>
+
                 <v-card-text class="pl-4 pr-4">
                   <div class="tool a-0 ma-0">
                     <div class="caption mb-1">
@@ -255,6 +232,7 @@
 <script>
 import userName from './name.vue'
 import userEmail from './email.vue'
+import birthDate from './birthdate.vue'
 import router from '../../routes'
 var AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 var countries = require('country-list')()
@@ -262,20 +240,19 @@ var countries = require('country-list')()
 export default {
   components: {
     'app-user-name': userName,
-    'app-user-email': userEmail
+    'app-user-email': userEmail,
+    'app-birth-date': birthDate
   },
   data: function () {
     return {
       menu: false,
       modal: false,
       edit: {
-        birthdate: false,
         phone: false,
         haddress: false,
         baddress: false
       },
       enable: {
-        dateEditButtons: false,
         phoneEditButtons: false,
         haddressEditButtons: false,
         baddressEditButtons: false
@@ -287,6 +264,7 @@ export default {
           last: ''
         },
         emailAddress: '',
+        birthDate: '',
         phoneNumber: {
           mobile: '',
           business: '',
@@ -308,7 +286,6 @@ export default {
         }
       },
       userData: {
-        birthdate: '',
         phoneNumber: {
           mobile: '',
           business: '',
@@ -408,14 +385,14 @@ export default {
         this.userModel.name.first = data.first
         this.userModel.name.middle = data.middle
         this.userModel.name.last = data.last
-        this.enable.nameEditButtons = false
       })
     },
-    updateDate: function () {
+    updateBirthDate: function (date) {
       console.log('updating birthday date...')
-      var attributeList = []
-      var attributeBirthDate = { Name: 'birthdate', Value: this.userModel.birthDate }
-      var birthDate = new AmazonCognitoIdentity.CognitoUserAttribute(attributeBirthDate)
+      let attributeList = []
+      let attributeBirthDate = { Name: 'birthdate', Value: date }
+      let birthDate = new AmazonCognitoIdentity.CognitoUserAttribute(attributeBirthDate)
+      console.log(birthDate)
       attributeList.push(birthDate)
       this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
         if (err) {
@@ -423,8 +400,7 @@ export default {
           return
         }
         console.log('call result: ' + result)
-        this.userData.birthDate = this.userModel.birthDate
-        this.enable.dateEditButtons = false
+        this.userModel.birthDate = date
       })
     },
     updatePhone: function () {
@@ -476,9 +452,6 @@ export default {
     }
   },
   computed: {
-    birthDate: function () {
-      return this.userModel.birthDate
-    },
     phoneNumber: function () {
       return this.userModel.phoneNumber.mobile + this.userModel.phoneNumber.business + this.userModel.phoneNumber.home
     },
@@ -490,14 +463,6 @@ export default {
     }
   },
   watch: {
-    birthDate: function () {
-      console.log('birthdate changed')
-      if (this.userModel.birthDate !== this.userData.birthDate) {
-        this.enable.dateEditButtons = true
-      } else {
-        this.enable.dateEditButtons = false
-      }
-    },
     phoneNumber: function () {
       console.log('phone number changed')
       if ((this.userModel.phoneNumber.mobile !== this.userData.phoneNumber.mobile) ||
@@ -537,7 +502,6 @@ export default {
     if (this.$store.state.authenticated === true) {
       this.getAttributes()
     }
-    this.enable.dateEditButtons = false
     this.enable.phoneEditButtons = false
     this.enable.haddressEditButtons = false
     this.enable.baddressEditButtons = false

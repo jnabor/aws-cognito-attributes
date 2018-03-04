@@ -13,6 +13,12 @@
             </v-flex>
             <v-flex xl8 lg8 md8 sm8>
               <v-card class="mb-2">
+
+                <app-user-name
+                  :name="userModel.name"
+                  @updateName="updateName($event)">
+                </app-user-name>
+
                 <v-card-text class="pl-4 pr-4">
                   <div class="tool a-0 ma-0">
                     <div class="caption mb-1">Name</div>
@@ -43,7 +49,7 @@
                     <v-btn class="ml-4" small :disabled="!enable.nameEditButtons" @click="cancelEdit('name')">CANCEL</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn small  @click="edit.name = false" >CLOSE</v-btn>
-                    <v-btn class="mr-4" small :disabled="!enable.nameEditButtons" @click="updateName()" color="success">SAVE</v-btn>
+                    <v-btn class="mr-4" small :disabled="!enable.nameEditButtons" @click="updateName_()" color="success">SAVE</v-btn>
                   </v-card-actions>
                 </div>
                 <v-divider></v-divider>
@@ -283,11 +289,15 @@
 </template>
 
 <script>
-import router from '../routes'
+import userName from './Name.vue'
+import router from '../../routes'
 var AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 var countries = require('country-list')()
 
 export default {
+  components: {
+    'app-user-name': userName
+  },
   data: function () {
     return {
       menu: false,
@@ -307,6 +317,11 @@ export default {
         baddressEditButtons: false
       },
       userModel: {
+        name: {
+          first: '',
+          middle: '',
+          last: ''
+        },
         firstName: '',
         middleName: '',
         lastName: '',
@@ -378,12 +393,15 @@ export default {
         if (attribute.Name === 'given_name') {
           this.userModel.firstName = attribute.Value
           this.userData.firstName = attribute.Value
+          this.userModel.name.first = attribute.Value
         } else if (attribute.Name === 'middle_name') {
           this.userModel.middleName = attribute.Value
           this.userData.middleName = attribute.Value
+          this.userModel.name.middle = attribute.Value
         } else if (attribute.Name === 'family_name') {
           this.userModel.lastName = attribute.Value
           this.userData.lastName = attribute.Value
+          this.userModel.name.last = attribute.Value
         } else if (attribute.Name === 'birthdate') {
           this.userModel.birthDate = attribute.Value
           this.userData.birthDate = attribute.Value
@@ -424,7 +442,13 @@ export default {
         this.userModel.businessAddress = JSON.parse(JSON.stringify(this.userData.businessAddress))
       }
     },
-    updateName: function () {
+    updateName: function (data) {
+      console.log('updating name...')
+      console.log(data.first)
+      console.log(data.middle)
+      console.log(data.last)
+    },
+    updateName_: function () {
       console.log('updating name...')
       var attributeList = []
       var attributeFirstName = { Name: 'given_name', Value: this.userModel.firstName }
@@ -446,6 +470,9 @@ export default {
         this.userData.middleName = this.userModel.middleName
         this.userData.lastName = this.userModel.lastName
         this.enable.nameEditButtons = false
+        this.userModel.name.first = this.userModel.firstName
+        this.userModel.name.middle = this.userModel.middleName
+        this.userModel.name.last = this.userModel.middleName
       })
     },
     updateDate: function () {

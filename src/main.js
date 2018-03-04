@@ -12,6 +12,7 @@ import AppRegistered from './components/Registered.vue'
 import AppForgot from './components/Forgot.vue'
 import AppConfirm from './components/Confirm.vue'
 import AppChanged from './components/Changed.vue'
+import AppProfile from './components/profile/Main.vue'
 import { store } from './store/store'
 
 // index.js or main.js
@@ -39,6 +40,7 @@ Vue.component('app-registered', AppRegistered)
 Vue.component('app-forgot', AppForgot)
 Vue.component('app-confirm', AppConfirm)
 Vue.component('app-changed', AppChanged)
+Vue.component('app-profile', AppProfile)
 
 /* eslint-disable no-new */
 new Vue({

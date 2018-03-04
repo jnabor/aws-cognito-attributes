@@ -127,7 +127,7 @@ export default {
             this.username = this.email
             this[l] = false
             this.loader = null
-            router.push('/home')
+            router.push('/profile')
           }
         },
         onFailure: (err) => {

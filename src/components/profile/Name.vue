@@ -9,9 +9,8 @@
         <v-icon v-else small color="indigo lighten-1">mdi-plus-circle-outline</v-icon>
       </v-btn>
     </div>
-    new: {{ nameUpdate }}<br />
-    original: {{ name }}<br />
-    <div class="body-2">{{ fullName === '  ' ? '...' : fullName }}</div>
+    <div class="body-2">New--- {{ fullName === '  ' ? '...' : fullName }}</div>
+    <div class="body-2">Original--- {{ fullName_ === '  ' ? '...' : fullName_ }}</div>
   </v-card-text>
   <template v-if="showEditView" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
     <v-card-text class="indigo lighten-5">
@@ -45,7 +44,11 @@ export default {
   },
   data: function () {
     return {
-      nameUpdate: '',
+      nameUpdate: {
+        first: '',
+        middle: '',
+        last: ''
+      },
       showEditView: false,
       enableSave: false
     }
@@ -66,19 +69,22 @@ export default {
   },
   computed: {
     fullName: function () {
-      return this.nameUpdate.first + ' ' + this.nameUpdate.middle + ' ' + this.nameUpdate.last
+      let fullName = this.nameUpdate.first + ' ' + this.nameUpdate.middle + ' ' + this.nameUpdate.last
+      return fullName
     },
-    propName: function () {
-      return this.name
+    fullName_: function () {
+      let fullName = this.name.first + ' ' + this.name.middle + ' ' + this.name.last
+      return fullName
     }
   },
   watch: {
-    propName: function () {
-      console.log('Name: child name change: ' + this.name)
+    name: function () {
+      console.log('Name: child name change: ' + JSON.stringify(this.name))
       this.nameUpdate = JSON.parse(JSON.stringify(this.name))
     },
     fullName: function () {
       console.log('Name: name update changed: ' + this.fullName)
+      console.log('Name: changed ' + 'update:' + JSON.stringify(this.nameUpdate) + 'name:' + JSON.stringify(this.name))
       if ((this.nameUpdate.first !== this.name.first) ||
           (this.nameUpdate.middle !== this.name.middle) ||
           (this.nameUpdate.last !== this.name.last)) {
@@ -87,10 +93,6 @@ export default {
         this.enableSave = false
       }
     }
-  },
-  beforeMount: function () {
-    console.log('Name: beforeMount')
-    this.nameUpdate = JSON.parse(JSON.stringify(this.name))
   }
 }
 </script>

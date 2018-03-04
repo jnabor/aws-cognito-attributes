@@ -8,7 +8,7 @@
               <v-card class="elevation-0 mr-2 transparent">
                 <div class="headline mb-2">User Profile</div>
                 <div class="body-1">Manage your basic information: your name, email, and phone number, etc. Help others find you and make it easier to get in touch.</div>
-                <!-- <v-btn small @click="getAttributes()">GET</v-btn> -->
+                <v-btn small @click="getAttributes()">GET</v-btn>
               </v-card>
             </v-flex>
             <v-flex xl8 lg8 md8 sm8>

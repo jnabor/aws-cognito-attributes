@@ -12,45 +12,57 @@
               </v-card>
             </v-flex>
             <v-flex xl8 lg8 md8 sm8>
+              <div class="title mb-3 ml-1">Personal Details</div>
               <v-card class="mb-2">
-
                 <app-user-name
                   :name="userModel.name"
                   @updateName="updateName($event)">
                 </app-user-name>
                 <v-divider></v-divider>
-
                 <app-user-email
                   :email="userModel.emailAddress">
                 </app-user-email>
                 <v-divider></v-divider>
-
                 <app-birth-date
                   :birthdate="userModel.birthDate"
                   :caption="'Birth Date'"
                   @updateBirthDate="updateBirthDate($event)">
                 </app-birth-date>
                 <v-divider></v-divider>
-
                 <app-phone-number
                   :phone="userModel.phoneNumber"
                   @updatePhoneNumber="updatePhone($event)">
                 </app-phone-number>
                 <v-divider></v-divider>
-
                 <app-address
                   :address="userModel.homeAddress"
                   :caption="'Home Address'"
                   @updateAddress="updateAddress($event, 'home')">
                 </app-address>
                 <v-divider></v-divider>
-
                 <app-address
                   :address="userModel.businessAddress"
                   :caption="'Business Address'"
                   @updateAddress="updateAddress($event, 'business')">
                 </app-address>
-
+              </v-card>
+              <div class="tool a-0 ma-0">
+                <div class="title mb-3 mt-5 ml-1 pt-2">
+                  Custom Attributes
+                </div>
+                <v-spacer></v-spacer>
+                <v-btn icon small dark color="indigo" class="pa-0 ma-0 topright" @click="showEditView = !showEditView">
+                  <v-icon dark small>add</v-icon>
+                </v-btn>
+              </div>
+              <v-card class="mb-2">
+                <template v-for="(item, index) in userModel.custom">
+                  <app-custom
+                    :key="index"
+                    :obj="item"
+                    :caption="'Custom Atribute' + ' ' + index">
+                  </app-custom>
+                </template>
               </v-card>
             </v-flex>
           </v-layout>
@@ -66,6 +78,7 @@ import userEmail from './email.vue'
 import birthDate from './birthdate.vue'
 import phoneNumber from './phone.vue'
 import address from './address.vue'
+import custom from './custom.vue'
 var AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 
 export default {
@@ -74,37 +87,22 @@ export default {
     'app-user-email': userEmail,
     'app-birth-date': birthDate,
     'app-phone-number': phoneNumber,
-    'app-address': address
+    'app-address': address,
+    'app-custom': custom
   },
   data: function () {
     return {
       userModel: {
-        name: {
-          first: '',
-          middle: '',
-          last: ''
-        },
+        name: { first: '', middle: '', last: '' },
         emailAddress: '',
         birthDate: '',
-        phoneNumber: {
-          mobile: '',
-          business: '',
-          home: ''
-        },
-        homeAddress: {
-          line: '',
-          city: '',
-          state: '',
-          zipcode: '',
-          country: ''
-        },
-        businessAddress: {
-          line: '',
-          city: '',
-          state: '',
-          zipcode: '',
-          country: ''
-        }
+        phoneNumber: { mobile: '', business: '', home: '' },
+        homeAddress: { line: '', city: '', state: '', zipcode: '', country: '' },
+        businessAddress: { line: '', city: '', state: '', zipcode: '', country: '' },
+        custom: [
+          { prop1: 'apple', prop2: 'orange', prop3: 'mango', prop4: 'banana', prop5: 'durian' },
+          { prop1: 'ford', prop2: 'toyota', prop3: 'bmw', prop4: 'mercedez', prop5: 'tesla' }
+        ]
       }
     }
   },
@@ -244,6 +242,6 @@ export default {
 .topright {
     position: absolute;
     top: 0px;
-    right: 0px;
+    right: 10px;
 }
 </style>

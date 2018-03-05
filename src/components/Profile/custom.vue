@@ -4,9 +4,11 @@
     <div class="tool a-0 ma-0">
       <div class="caption mb-1">{{ caption }}</div>
       <v-spacer></v-spacer>
+      <v-btn icon flat small class="pa-0 ma-0 topright-2" @click="deleteMe()">
+        <v-icon small color="indigo lighten-1">delete</v-icon>
+      </v-btn>
       <v-btn icon flat small class="pa-0 ma-0 topright" @click="showEditView = !showEditView">
-        <v-icon v-if="objUp !== '    '" small color="indigo lighten-1">edit</v-icon>
-        <v-icon v-else small color="indigo lighten-1">mdi-plus-circle-outline</v-icon>
+        <v-icon small color="indigo lighten-1">edit</v-icon>
       </v-btn>
     </div>
     <div class="body-2">{{ objUp === '    ' ? '...' : objUp }}</div>
@@ -48,7 +50,11 @@
 export default {
   props: {
     obj: Object,
-    caption: String
+    caption: String,
+    edit: {
+      default: false,
+      type: Boolean
+    }
   },
   data: function () {
     return {
@@ -64,6 +70,9 @@ export default {
     }
   },
   methods: {
+    deleteMe: function () {
+      this.$emit('delete')
+    },
     cancelEdit: function () {
       this.objUpdate = JSON.parse(JSON.stringify(this.obj))
     },
@@ -103,6 +112,7 @@ export default {
   },
   created () {
     this.objUpdate = JSON.parse(JSON.stringify(this.obj))
+    this.showEditView = this.edit.clone
   }
 }
 </script>
@@ -116,5 +126,10 @@ export default {
     position: absolute;
     top: 0px;
     right: 0px;
+}
+.topright-2 {
+    position: absolute;
+    top: 0px;
+    right: 32px;
 }
 </style>

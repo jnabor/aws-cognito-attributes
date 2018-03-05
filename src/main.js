@@ -12,7 +12,7 @@ import AppRegistered from './components/Registered.vue'
 import AppForgot from './components/Forgot.vue'
 import AppConfirm from './components/Confirm.vue'
 import AppChanged from './components/Changed.vue'
-import AppProfile from './components/Profile/Main.vue'
+import AppProfile from './components/Profile/Index.vue'
 import { store } from './store/store'
 
 // index.js or main.js

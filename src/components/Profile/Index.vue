@@ -12,8 +12,10 @@
               </v-card>
             </v-flex>
             <v-flex xl8 lg8 md8 sm8>
-              <div class="title mb-3 ml-1">Personal Details</div>
               <v-card class="mb-2">
+                <v-toolbar dense class="elevation-1">
+                  <v-toolbar-title>Personal Details</v-toolbar-title>
+                </v-toolbar>
                 <app-user-name
                   :name="userModel.name"
                   @updateName="updateName($event)">
@@ -46,24 +48,25 @@
                   @updateAddress="updateAddress($event, 'business')">
                 </app-address>
               </v-card>
-              <div class="tool a-0 ma-0">
-                <div class="title mb-3 mt-5 ml-1 pt-2">
-                  Custom Attributes
-                </div>
-                <v-spacer></v-spacer>
-                <v-btn icon small dark color="indigo" class="pa-0 ma-0 topright" @click="showEditView = !showEditView">
-                  <v-icon dark small>add</v-icon>
-                </v-btn>
-              </div>
-              <v-card class="mb-2">
+              <v-card class="mb-2 mt-4">
+                <v-toolbar dense class="elevation-1">
+                  <v-toolbar-title>Custom Attributes</v-toolbar-title>
+                </v-toolbar>
                 <template v-for="(item, index) in userModel.custom">
                   <app-custom
                     :key="index"
                     :obj="item"
+                    @delete="deleteCustom(index)"
                     :caption="'Custom Atribute' + ' ' + index">
                   </app-custom>
                 </template>
               </v-card>
+              <div class="tool a-0 ma-0">
+                <v-spacer></v-spacer>
+                <v-btn icon small dark color="indigo" class="mt-2 pa-0 ma-0 topright" @click="addCustom()">
+                  <v-icon dark small>add</v-icon>
+                </v-btn>
+              </div>
             </v-flex>
           </v-layout>
         </v-card>
@@ -224,6 +227,18 @@ export default {
           this.userModel.businessAddress = JSON.parse(JSON.stringify(newAddress))
         }
       })
+    },
+    addCustom: function () {
+      console.log('adding custom attribute ...')
+      let attribute = { prop1: '', prop2: '', prop3: '', prop4: '', prop5: '' }
+
+      // push when saving
+      this.userModel.custom.push(attribute)
+      // save custom to db
+    },
+    deleteCustom: function (index) {
+      console.log('deleting custom attribute at index ' + index)
+      // todo
     }
   },
   beforeMount: function () {

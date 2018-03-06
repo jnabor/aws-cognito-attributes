@@ -63,10 +63,22 @@
               </v-card>
               <div class="tool a-0 ma-0">
                 <v-spacer></v-spacer>
-                <v-btn icon small dark color="indigo" class="mt-2 pa-0 ma-0 topright" @click="addCustom()">
+                <v-btn icon small dark color="indigo" class="mt-2 pa-0 ma-0 topright" @click="addCustomForm= !addCustomForm">
                   <v-icon dark small>add</v-icon>
                 </v-btn>
               </div>
+              <v-dialog v-model="addCustomForm" max-width="500px">
+                <v-card>
+                <v-toolbar dense class="elevation-0">
+                  <v-toolbar-title>Add Custom Attribute</v-toolbar-title>
+                </v-toolbar>
+                 <app-custom
+                    :obj="{ prop1: '', prop2: '', prop3: '', prop4: '', prop5: '' }"
+                    :edit:="true"
+                    :caption="'Custom Attribute'">
+                  </app-custom>
+                </v-card>
+              </v-dialog>
             </v-flex>
           </v-layout>
         </v-card>
@@ -106,7 +118,8 @@ export default {
           { prop1: 'apple', prop2: 'orange', prop3: 'mango', prop4: 'banana', prop5: 'durian' },
           { prop1: 'ford', prop2: 'toyota', prop3: 'bmw', prop4: 'mercedez', prop5: 'tesla' }
         ]
-      }
+      },
+      addCustomForm: false
     }
   },
   methods: {

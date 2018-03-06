@@ -51,6 +51,10 @@ export default {
   props: {
     obj: Object,
     caption: String,
+    delete: {
+      default: true,
+      type: Boolean
+    },
     edit: {
       default: false,
       type: Boolean

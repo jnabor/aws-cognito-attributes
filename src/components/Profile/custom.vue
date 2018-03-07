@@ -4,10 +4,10 @@
     <div class="tool a-0 ma-0">
       <div class="caption mb-1">{{ caption }}</div>
       <v-spacer></v-spacer>
-      <v-btn v-if="!noedit" icon flat small class="pa-0 ma-0 topright-2" @click="deleteMe()">
+      <v-btn v-if="!newEntry" icon flat small class="pa-0 ma-0 topright-2" @click="deleteAttribute()">
         <v-icon small color="indigo lighten-1">delete</v-icon>
       </v-btn>
-      <v-btn v-if="!noedit" icon flat small class="pa-0 ma-0 topright" @click="showEditView = !showEditView">
+      <v-btn v-if="!newEntry" icon flat small class="pa-0 ma-0 topright" @click="showEditView = !showEditView">
         <v-icon small color="indigo lighten-1">edit</v-icon>
       </v-btn>
     </div>
@@ -37,9 +37,9 @@
       </v-text-field>
     </v-card-text>
     <v-card-actions>
-      <v-btn class="ml-4" small :disabled="!enableSave && !noedit" @click="cancelEdit()">CANCEL</v-btn>
+      <v-btn class="ml-4" small :disabled="!enableSave && !newEntry" @click="cancelEdit()">CANCEL</v-btn>
       <v-spacer></v-spacer>
-      <v-btn v-if="!noedit" small  @click="closeEdit()" >CLOSE</v-btn>
+      <v-btn v-if="!newEntry" small  @click="closeEdit()" >CLOSE</v-btn>
       <v-btn class="mr-4" small :disabled="!enableSave" @click="updateAttribute()" color="success">SAVE</v-btn>
     </v-card-actions>
   </div>
@@ -55,7 +55,7 @@ export default {
       default: true,
       type: Boolean
     },
-    noedit: {
+    newEntry: {
       default: false,
       type: Boolean
     }
@@ -75,8 +75,9 @@ export default {
   },
   methods: {
     cancelEdit: function () {
-      if (this.noedit === true) {
+      if (this.newEntry === true) {
         this.$emit('close')
+        this.objUpdate = { prop1: '', prop2: '', prop3: '', prop4: '', prop5: '' }
       } else {
         this.objUpdate = JSON.parse(JSON.stringify(this.obj))
       }
@@ -86,12 +87,11 @@ export default {
       this.showEditView = false
     },
     updateAttribute: function () {
-      if (this.noedit === true) {
-        // add
-        this.$emit('add', this.nameUpdate)
+      if (this.newEntry === true) {
+        this.$emit('add', this.objUpdate)
+        this.objUpdate = { prop1: '', prop2: '', prop3: '', prop4: '', prop5: '' }
       } else {
-        // update
-        this.$emit('update', this.nameUpdate)
+        this.$emit('update', this.objUpdate)
       }
       this.enableSave = false
     },
@@ -125,7 +125,7 @@ export default {
   },
   created () {
     this.objUpdate = JSON.parse(JSON.stringify(this.obj))
-    if (this.noedit === true) {
+    if (this.newEntry === true) {
       this.showEditView = true
     } else {
       this.showEditView = false

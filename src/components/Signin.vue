@@ -120,8 +120,7 @@ export default {
         onSuccess: (result) => {
           if (!this.callback) {
             this.callback = true
-            console.log('sign in success with token: ' + result.getIdToken().getJwtToken())
-            this.$store.state.token = result.getIdToken().getJwtToken()
+            console.log('sign in success')
             this.$store.state.authenticated = true
             this.$store.state.username = this.email
             this.username = this.email

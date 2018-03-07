@@ -60,6 +60,8 @@
                   <app-custom
                     :key="index"
                     :obj="item"
+                    :newEntry="false"
+                    @update="updateCustom($event, index)"
                     @delete="deleteCustom(index)"
                     :caption="'Custom Atribute' + ' ' + index">
                   </app-custom>
@@ -72,7 +74,7 @@
                 </v-toolbar>
                  <app-custom
                     :obj="{ prop1: '', prop2: '', prop3: '', prop4: '', prop5: '' }"
-                    :noedit="true"
+                    :newEntry="true"
                     @add="addCustom($event)"
                     @close="addCustomForm =! addCustomForm"
                     :caption="'Custom Attribute'">
@@ -114,10 +116,7 @@ export default {
         phoneNumber: { mobile: '', business: '', home: '' },
         homeAddress: { line: '', city: '', state: '', zipcode: '', country: '' },
         businessAddress: { line: '', city: '', state: '', zipcode: '', country: '' },
-        custom: [
-          { prop1: 'apple', prop2: 'orange', prop3: 'mango', prop4: 'banana', prop5: 'durian' },
-          { prop1: 'ford', prop2: 'toyota', prop3: 'bmw', prop4: 'mercedez', prop5: 'tesla' }
-        ]
+        custom: []
       },
       addCustomForm: false
     }
@@ -152,6 +151,8 @@ export default {
           this.userModel.homeAddress = JSON.parse(attribute.Value)
         } else if (attribute.Name === 'custom:business_address') {
           this.userModel.businessAddress = JSON.parse(attribute.Value)
+        } else if (attribute.Name === 'custom:custom_attribute') {
+          this.userModel.custom = JSON.parse(attribute.Value)
         }
         console.log('property:' + attribute.Name + ' value:' + attribute.Value)
       }
@@ -241,20 +242,41 @@ export default {
         }
       })
     },
-    addCustom: function (attribute) {
+    addCustom: function (value) {
       console.log('adding custom attribute ...')
-      console.log(attribute)
-
-      // push when saving
-      this.userModel.custom.push(attribute)
-      // save custom to db
+      let newCustom = this.userModel.custom.slice()
+      newCustom.push(value)
+      this.updateCustomAtrribute(newCustom)
     },
-    updateCustom: function (attribute, index) {
-      console.log('deleting custom attribute at index ' + index)
+    updateCustom: function (value, index) {
+      console.log('updating custom attribute ...')
+      let newCustom = this.userModel.custom.slice()
+      newCustom.splice(index, 1, value)
+      this.updateCustomAtrribute(newCustom)
     },
     deleteCustom: function (index) {
       console.log('deleting custom attribute at index ' + index)
-      // todo
+      let newCustom = this.userModel.custom.slice()
+      if (index > -1) {
+        newCustom.splice(index, 1)
+      }
+      this.updateCustomAtrribute(newCustom)
+    },
+    updateCustomAtrribute: function (customAttribute) {
+      let attributeList = []
+      let attribute = { Name: 'custom:custom_attribute', Value: JSON.stringify(customAttribute) }
+      var newAttribute = new AmazonCognitoIdentity.CognitoUserAttribute(attribute)
+      attributeList.push(newAttribute)
+      this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
+        if (err) {
+          console.log('error: ' + JSON.stringify(err))
+          return
+        }
+        console.log('call result: ' + result)
+        console.log('custom attribute updated')
+        this.addCustomForm = false
+        this.userModel.custom = customAttribute.slice()
+      })
     }
   },
   beforeMount: function () {

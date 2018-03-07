@@ -4,10 +4,10 @@
     <div class="tool a-0 ma-0">
       <div class="caption mb-1">{{ caption }}</div>
       <v-spacer></v-spacer>
-      <v-btn icon flat small class="pa-0 ma-0 topright-2" @click="deleteMe()">
+      <v-btn v-if="!noedit" icon flat small class="pa-0 ma-0 topright-2" @click="deleteMe()">
         <v-icon small color="indigo lighten-1">delete</v-icon>
       </v-btn>
-      <v-btn icon flat small class="pa-0 ma-0 topright" @click="showEditView = !showEditView">
+      <v-btn v-if="!noedit" icon flat small class="pa-0 ma-0 topright" @click="showEditView = !showEditView">
         <v-icon small color="indigo lighten-1">edit</v-icon>
       </v-btn>
     </div>
@@ -37,9 +37,9 @@
       </v-text-field>
     </v-card-text>
     <v-card-actions>
-      <v-btn class="ml-4" small :disabled="!enableSave" @click="cancelEdit()">CANCEL</v-btn>
+      <v-btn class="ml-4" small :disabled="!enableSave && !noedit" @click="cancelEdit()">CANCEL</v-btn>
       <v-spacer></v-spacer>
-      <v-btn small  @click="closeEdit()" >CLOSE</v-btn>
+      <v-btn v-if="!noedit" small  @click="closeEdit()" >CLOSE</v-btn>
       <v-btn class="mr-4" small :disabled="!enableSave" @click="updateAttribute()" color="success">SAVE</v-btn>
     </v-card-actions>
   </div>
@@ -55,7 +55,7 @@ export default {
       default: true,
       type: Boolean
     },
-    edit: {
+    noedit: {
       default: false,
       type: Boolean
     }
@@ -74,20 +74,29 @@ export default {
     }
   },
   methods: {
-    deleteMe: function () {
-      this.$emit('delete')
-    },
     cancelEdit: function () {
-      this.objUpdate = JSON.parse(JSON.stringify(this.obj))
+      if (this.noedit === true) {
+        this.$emit('close')
+      } else {
+        this.objUpdate = JSON.parse(JSON.stringify(this.obj))
+      }
     },
     closeEdit: function () {
       this.cancelEdit()
       this.showEditView = false
     },
     updateAttribute: function () {
-      // this.$emit('updateName', this.nameUpdate)
-
+      if (this.noedit === true) {
+        // add
+        this.$emit('add', this.nameUpdate)
+      } else {
+        // update
+        this.$emit('update', this.nameUpdate)
+      }
       this.enableSave = false
+    },
+    deleteAttribute: function () {
+      this.$emit('delete')
     }
   },
   computed: {
@@ -116,7 +125,13 @@ export default {
   },
   created () {
     this.objUpdate = JSON.parse(JSON.stringify(this.obj))
-    this.showEditView = this.edit.clone
+    if (this.noedit === true) {
+      this.showEditView = true
+    } else {
+      this.showEditView = false
+    }
+    console.log('noedit: ' + this.noedit)
+    console.log('showEdit: ' + this.showEditView)
   }
 }
 </script>

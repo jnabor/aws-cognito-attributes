@@ -51,6 +51,10 @@
               <v-card class="mb-2 mt-4">
                 <v-toolbar dense class="elevation-1">
                   <v-toolbar-title>Custom Attributes</v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-btn icon small dark color="indigo mr-4" @click="addCustomForm =! addCustomForm">
+                    <v-icon dark small>add</v-icon>
+                  </v-btn>
                 </v-toolbar>
                 <template v-for="(item, index) in userModel.custom">
                   <app-custom
@@ -61,12 +65,6 @@
                   </app-custom>
                 </template>
               </v-card>
-              <div class="tool a-0 ma-0">
-                <v-spacer></v-spacer>
-                <v-btn icon small dark color="indigo" class="mt-2 pa-0 ma-0 topright" @click="addCustomForm= !addCustomForm">
-                  <v-icon dark small>add</v-icon>
-                </v-btn>
-              </div>
               <v-dialog v-model="addCustomForm" max-width="500px">
                 <v-card>
                 <v-toolbar dense class="elevation-0">
@@ -74,7 +72,9 @@
                 </v-toolbar>
                  <app-custom
                     :obj="{ prop1: '', prop2: '', prop3: '', prop4: '', prop5: '' }"
-                    :edit:="true"
+                    :noedit="true"
+                    @add="addCustom($event)"
+                    @close="addCustomForm =! addCustomForm"
                     :caption="'Custom Attribute'">
                   </app-custom>
                 </v-card>
@@ -156,12 +156,12 @@ export default {
         console.log('property:' + attribute.Name + ' value:' + attribute.Value)
       }
     },
-    updateName: function (data) {
+    updateName: function (name) {
       console.log('updating name...')
       let attributeList = []
-      let attributeFirstName = { Name: 'given_name', Value: data.first }
-      let attributeMiddleName = { Name: 'middle_name', Value: data.middle }
-      let attributeLastName = { Name: 'family_name', Value: data.last }
+      let attributeFirstName = { Name: 'given_name', Value: name.first }
+      let attributeMiddleName = { Name: 'middle_name', Value: name.middle }
+      let attributeLastName = { Name: 'family_name', Value: name.last }
       let firstName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeFirstName)
       let middleName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeMiddleName)
       let lastName = new AmazonCognitoIdentity.CognitoUserAttribute(attributeLastName)
@@ -174,9 +174,9 @@ export default {
           return
         }
         console.log('call result: ' + result)
-        this.userModel.name.first = data.first
-        this.userModel.name.middle = data.middle
-        this.userModel.name.last = data.last
+        this.userModel.name.first = name.first
+        this.userModel.name.middle = name.middle
+        this.userModel.name.last = name.last
       })
     },
     updateBirthDate: function (date) {
@@ -241,13 +241,16 @@ export default {
         }
       })
     },
-    addCustom: function () {
+    addCustom: function (attribute) {
       console.log('adding custom attribute ...')
-      let attribute = { prop1: '', prop2: '', prop3: '', prop4: '', prop5: '' }
+      console.log(attribute)
 
       // push when saving
       this.userModel.custom.push(attribute)
       // save custom to db
+    },
+    updateCustom: function (attribute, index) {
+      console.log('deleting custom attribute at index ' + index)
     },
     deleteCustom: function (index) {
       console.log('deleting custom attribute at index ' + index)

@@ -14,38 +14,40 @@ http://sonabstudios.com/
 1. Sign Up
    - [x] register with email and password
    - [x] Confirmation code sent to email
-   - [] Resend confirmation code to email
+   - [ ] Resend confirmation code to email -- ongoing development for v1.1
    - [x] Confirmation code verification
    - [ ] Custom workflow (via lambda)
    - [ ] SMS verification option
 2. Sign In
    - [x] Authentication for verified users
    - [x] Auto sign on browser refresh or reopen
-   - [] Refresh token periodically
-   - [] Custom workflow (via lambda)
+   - [ ] Refresh token periodically
+   - [ ] Custom workflow (via lambda)
 3. Sign Out
    - [x] invalidate session
 4. Password Update
    - [x] reset or change password
-5. Attributes
+5. Attributes (User Profile)
    - [x] default: name, email, phone, etc.
    - [x] custom: custom addresses, personal information, etc.
+   - [ ] profile picture: crop, resized and upload to S3 -- ongoing development for v1.1
+   - [ ] phone number attribute with verification
 6. Access Control
    - [ ] API Gateway
 7. User Pool
    - [ ] Administrators
-   - [ ] User Management
+   - [ ] User Management -- ongoing development for v1.1
    - [ ] User Groups
    - [ ] User Migration
 
+
 ## Build Setup
 
-add src/components/config.js file to contain the following:
-export const poolData = {
-  UserPoolId: '<your user pool id>',
-  ClientId: '<your client id>'
+add src/config.js file to contain the following:
+const poolData = { UserPoolId: <UserPoolId>, ClientId: <ClientId> }
+export default {
+  poolData
 }
-
 
 ``` bash
 # install dependencies

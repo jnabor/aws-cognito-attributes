@@ -15,4 +15,4 @@ selenium-debug.log
 *.ntvs*
 *.njsproj
 *.sln
-src/components/config.js
+src/config.js

@@ -16,10 +16,11 @@
   "dependencies": {
     "amazon-cognito-identity-js": "^2.0.0",
     "aws-sdk": "^2.197.0",
+    "axios": "^0.18.0",
     "country-list": "^1.1.0",
-    "vue": "^2.5.2",
+    "vue": "^2.5.16",
     "vue-router": "^3.0.1",
-    "vuetify": "^1.0.1",
+    "vuetify": "^1.0.14",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
@@ -74,7 +75,7 @@
     "vue-jest": "^1.0.2",
     "vue-loader": "^13.3.0",
     "vue-style-loader": "^3.0.1",
-    "vue-template-compiler": "^2.5.2",
+    "vue-template-compiler": "^2.5.16",
     "webpack": "^3.6.0",
     "webpack-bundle-analyzer": "^2.9.0",
     "webpack-dev-server": "^2.9.1",

@@ -1,48 +1,68 @@
+
 <template>
 <div>
-  <v-card-text class="pl-4 pr-4">
-    <div class="tool a-0 ma-0">
-      <div class="caption mb-1">{{ caption }}</div>
-      <v-spacer></v-spacer>
-      <v-btn v-if="!newEntry" icon flat small class="pa-0 ma-0 topright-2" @click="deleteAttribute()">
-        <v-icon small color="indigo lighten-1">delete</v-icon>
+  <v-list-tile>
+    <v-list-tile-content>
+      <v-list-tile-sub-title>
+        {{ caption }}
+      </v-list-tile-sub-title>
+    </v-list-tile-content>
+    <v-list-tile-action>
+      <v-btn icon flat class="pa-0 ma-0" @click="dialog = !dialog">
+        <v-icon color="editicon">edit</v-icon>
       </v-btn>
-      <v-btn v-if="!newEntry" icon flat small class="pa-0 ma-0 topright" @click="showEditView = !showEditView">
-        <v-icon small color="indigo lighten-1">edit</v-icon>
-      </v-btn>
-    </div>
-    <div class="body-2">{{ objUp === '    ' ? '...' : objUp }}</div>
-  </v-card-text>
-  <div v-if="showEditView" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
-    <v-card-text class="indigo lighten-5">
-      <v-text-field
-        v-model="objUpdate.prop1"
-        label="Property 1">
-      </v-text-field>
-      <v-text-field
-        v-model="objUpdate.prop2"
-        label="Property 2">
-      </v-text-field>
-      <v-text-field
-        v-model="objUpdate.prop3"
-        label="Property 3">
-      </v-text-field>
-      <v-text-field
-        v-model="objUpdate.prop4"
-        label="Property 4">
-      </v-text-field>
-      <v-text-field
-        v-model="objUpdate.prop5"
-        label="Property 5">
-      </v-text-field>
-    </v-card-text>
-    <v-card-actions>
-      <v-btn class="ml-4" small :disabled="!enableSave && !newEntry" @click="cancelEdit()">CANCEL</v-btn>
-      <v-spacer></v-spacer>
-      <v-btn v-if="!newEntry" small  @click="closeEdit()" >CLOSE</v-btn>
-      <v-btn class="mr-4" small :disabled="!enableSave" @click="updateAttribute()" color="success">SAVE</v-btn>
-    </v-card-actions>
-  </div>
+    </v-list-tile-action>
+  </v-list-tile>
+  <div class="subheading ml-3 pb-3">{{ objUp === '    ' ? '...' : objUp }}</div>
+  <v-dialog
+    v-model="dialog"
+    :fullscreen="fullscreen"
+    max-width="500"
+    transition="dialog-bottom-transition"
+    scrollable>
+    <v-card>
+      <v-toolbar class="elevation-0 white--text" color="primary">
+        <v-toolbar-title v-if="!newEntry" >Edit Custom Attribute</v-toolbar-title>
+        <v-toolbar-title v-else>Add Custom Attribute</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon @click.native="dialog = false" dark>
+          <v-icon>close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <v-card-text>
+        <v-text-field
+          v-model="objUpdate.prop1"
+          label="Property 1">
+        </v-text-field>
+        <v-text-field
+          v-model="objUpdate.prop2"
+          label="Property 2">
+        </v-text-field>
+        <v-text-field
+          v-model="objUpdate.prop3"
+          label="Property 3">
+        </v-text-field>
+        <v-text-field
+          v-model="objUpdate.prop4"
+          label="Property 4">
+        </v-text-field>
+        <v-text-field
+          v-model="objUpdate.prop5"
+          label="Property 5">
+        </v-text-field>
+      </v-card-text>
+      <div>
+        <v-card-actions>
+          <v-btn v-if="!newEntry" icon flat color="editicon" class="mx-3 mb-2" @click="deleteAttribute()">
+            <v-icon medium>delete</v-icon>
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn class="mx-3 mb-2" @click="cancelEdit()">CANCEL</v-btn>
+          <v-btn class="mx-3 mb-2" :disabled="!enableSave" @click="updateAttribute()" color="success">SAVE</v-btn>
+        </v-card-actions>
+      </div>
+    </v-card>
+  </v-dialog>
 </div>
 </template>
 
@@ -62,6 +82,7 @@ export default {
   },
   data: function () {
     return {
+      dialog: false,
       objUpdate: {
         prop1: '',
         prop2: '',
@@ -69,7 +90,7 @@ export default {
         prop4: '',
         prop5: ''
       },
-      showEditView: false,
+      fullscreen: true,
       enableSave: false
     }
   },
@@ -81,10 +102,7 @@ export default {
       } else {
         this.objUpdate = JSON.parse(JSON.stringify(this.obj))
       }
-    },
-    closeEdit: function () {
-      this.cancelEdit()
-      this.showEditView = false
+      this.dialog = false
     },
     updateAttribute: function () {
       if (this.newEntry === true) {
@@ -94,9 +112,22 @@ export default {
         this.$emit('update', this.objUpdate)
       }
       this.enableSave = false
+      this.dialog = false
     },
     deleteAttribute: function () {
-      this.$emit('delete')
+      if (this.newEntry === true) {
+        this.objUpdate = { prop1: '', prop2: '', prop3: '', prop4: '', prop5: '' }
+      } else {
+        this.$emit('delete')
+      }
+      this.dialog = false
+    },
+    setHeaders (param) {
+      if (param === 'xs') {
+        this.fullscreen = true
+      } else {
+        this.fullscreen = false
+      }
     }
   },
   computed: {
@@ -105,6 +136,9 @@ export default {
     },
     objProp: function () {
       return this.obj.prop1 + ' ' + this.obj.prop2 + ' ' + this.obj.prop3 + ' ' + this.obj.prop4 + ' ' + this.obj.prop5
+    },
+    breakpoint () {
+      return this.$vuetify.breakpoint.name
     }
   },
   watch: {
@@ -121,34 +155,21 @@ export default {
     },
     objProp: function () {
       this.objUpdate = JSON.parse(JSON.stringify(this.obj))
+    },
+    breakpoint () {
+      this.setHeaders(this.breakpoint)
     }
   },
   created () {
     this.objUpdate = JSON.parse(JSON.stringify(this.obj))
     if (this.newEntry === true) {
-      this.showEditView = true
+      this.dialog = true
     } else {
-      this.showEditView = false
+      this.dialog = false
     }
-    console.log('noedit: ' + this.noedit)
-    console.log('showEdit: ' + this.showEditView)
+    this.setHeaders(this.breakpoint)
   }
 }
 </script>
 <style scoped>
-.tool {
-    position: relative;
-    padding: 0px;
-    margin: 0px;
-}
-.topright {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-}
-.topright-2 {
-    position: absolute;
-    top: 0px;
-    right: 32px;
-}
 </style>

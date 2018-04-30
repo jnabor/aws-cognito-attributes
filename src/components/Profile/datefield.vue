@@ -3,14 +3,14 @@
   <v-list-tile>
     <v-list-tile-content>
       <v-list-tile-sub-title>
-        <v-icon class="mr-1">person</v-icon>
-        Name
+        <v-icon class="mr-1">date_range</v-icon>
+        {{ caption }}
       </v-list-tile-sub-title>
-      <v-list-tile-title>{{ fullNameUp === '  ' ? '...' : fullNameUp }}</v-list-tile-title>
+      <v-list-tile-title>{{ dateUpdate === '' ? '...' : dateUpdate }}</v-list-tile-title>
     </v-list-tile-content>
     <v-list-tile-action>
       <v-btn icon flat class="pa-0 ma-0" @click="dialog = !dialog">
-        <v-icon v-if="fullNameUp !== '  '" color="editicon">edit</v-icon>
+        <v-icon v-if="dateUpdate !== ''" color="editicon">edit</v-icon>
         <v-icon v-else color="editicon">add</v-icon>
       </v-btn>
     </v-list-tile-action>
@@ -23,25 +23,19 @@
     scrollable>
     <v-card>
       <v-toolbar class="elevation-0 white--text" color="primary">
-        <v-toolbar-title>Edit Name</v-toolbar-title>
+        <v-toolbar-title>Edit {{ caption }}</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon @click.native="dialog = false" dark>
           <v-icon>close</v-icon>
         </v-btn>
       </v-toolbar>
       <v-card-text>
-        <v-text-field
-          v-model="nameUpdate.first"
-          label="First Name">
-        </v-text-field>
-        <v-text-field
-          v-model="nameUpdate.middle"
-          label="Middle Name">
-        </v-text-field>
-        <v-text-field
-          v-model="nameUpdate.last"
-          label="Last Name">
-        </v-text-field>
+        <v-date-picker
+          full-width
+          class="mb-3 grey lighten-4 black--text"
+          v-model="dateUpdate"
+          :max="new Date().toISOString().substr(0, 10)">
+        </v-date-picker>
       </v-card-text>
       <div>
         <v-card-actions>
@@ -58,27 +52,24 @@
 <script>
 export default {
   props: {
-    name: Object
+    caption: String,
+    date: String
   },
   data: function () {
     return {
       dialog: false,
-      nameUpdate: {
-        first: '',
-        middle: '',
-        last: ''
-      },
+      dateUpdate: '',
       fullscreen: true,
       enableSave: false
     }
   },
   methods: {
     cancelEdit: function () {
-      this.nameUpdate = JSON.parse(JSON.stringify(this.name))
+      this.dateUpdate = JSON.parse(JSON.stringify(this.date))
       this.dialog = false
     },
     updateAttribute: function () {
-      this.$emit('updateName', this.nameUpdate)
+      this.$emit('update', this.dateUpdate)
       this.enableSave = false
       this.dialog = false
     },
@@ -91,35 +82,33 @@ export default {
     }
   },
   computed: {
-    fullNameUp: function () {
-      return this.nameUpdate.first + ' ' + this.nameUpdate.middle + ' ' + this.nameUpdate.last
+    dateUp: function () {
+      return this.dateUpdate
     },
-    fullNameProp: function () {
-      return this.name.first + ' ' + this.name.middle + ' ' + this.name.last
+    dateProp: function () {
+      return this.date
     },
     breakpoint () {
       return this.$vuetify.breakpoint.name
     }
   },
   watch: {
-    fullNameUp: function () {
-      if ((this.nameUpdate.first !== this.name.first) ||
-          (this.nameUpdate.middle !== this.name.middle) ||
-          (this.nameUpdate.last !== this.name.last)) {
+    dateUp: function () {
+      if (this.dateUpdate !== this.date) {
         this.enableSave = true
       } else {
         this.enableSave = false
       }
     },
-    fullNameProp: function () {
-      this.nameUpdate = JSON.parse(JSON.stringify(this.name))
+    dateProp: function () {
+      this.dateUpdate = JSON.parse(JSON.stringify(this.date))
     },
     breakpoint () {
       this.setHeaders(this.breakpoint)
     }
   },
   created () {
-    this.nameUpdate = JSON.parse(JSON.stringify(this.name))
+    this.dateUpdate = JSON.parse(JSON.stringify(this.date))
     this.setHeaders(this.breakpoint)
   }
 }

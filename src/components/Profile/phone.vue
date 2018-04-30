@@ -1,61 +1,78 @@
 <template>
 <div>
-  <v-card-text class="pl-4 pr-4">
-    <div class="tool a-0 ma-0">
-      <div class="caption mb-1">
-        <v-icon small class="mr-1">phone</v-icon>
-        Phone Number
-      </div>
-      <v-spacer></v-spacer>
-      <v-btn icon flat small class="pa-0 ma-0 topright" @click="showEditView = !showEditView">
+  <v-list-tile>
+    <v-list-tile-content>
+      <v-list-tile-sub-title class="ma-0 pa-0">
+        <v-icon class="mr-1">phone</v-icon>
+        Phone Numbers
+      </v-list-tile-sub-title>
+    </v-list-tile-content>
+    <v-list-tile-action>
+      <v-btn icon flat class="pa-0 ma-0" @click="dialog = !dialog">
         <v-icon v-if="phoneUpdate.mobile === '' && phoneUpdate.business === '' && phoneUpdate.home === ''"
-          small color="indigo lighten-1">
-          mdi-plus-circle-outline
+          color="editicon">add
         </v-icon>
-        <v-icon v-else small color="indigo lighten-1">edit</v-icon>
+        <v-icon v-else color="editicon">edit</v-icon>
       </v-btn>
-    </div>
+    </v-list-tile-action>
+  </v-list-tile>
+  <div class="ma-0 pt-0 pb-2 pl-3">
     <v-chip>
       <v-avatar>
-        <v-icon color="amber">mdi-cellphone</v-icon>
+        <v-icon color="grey">mdi-cellphone</v-icon>
       </v-avatar>
       {{ phoneUpdate.mobile === ''? '...' :  phoneUpdate.mobile }}
     </v-chip>
     <v-chip>
       <v-avatar>
-        <v-icon color="amber">mdi-deskphone</v-icon>
+        <v-icon color="grey">mdi-deskphone</v-icon>
       </v-avatar>
       {{ phoneUpdate.business === ''? '...' :  phoneUpdate.business }}
     </v-chip>
     <v-chip>
       <v-avatar>
-        <v-icon color="amber">mdi-home-variant</v-icon>
+        <v-icon color="grey">mdi-home-variant</v-icon>
       </v-avatar>
       {{ phoneUpdate.home === ''? '...' :  phoneUpdate.home }}
     </v-chip>
-  </v-card-text>
-  <div v-if="showEditView" class="pt-2 pl-2 pr-2 pb-2 indigo lighten-5">
-    <v-card-text class="indigo lighten-5">
-      <v-text-field
-        v-model="phoneUpdate.mobile"
-        label="Mobile Number">
-      </v-text-field>
-      <v-text-field
-        v-model="phoneUpdate.business"
-        label="Business Number">
-      </v-text-field>
-      <v-text-field
-        v-model="phoneUpdate.home"
-        label="Home Number">
-      </v-text-field>
-    </v-card-text>
-    <v-card-actions>
-      <v-btn class="ml-4" small :disabled="!enableSave" @click="cancelEdit()">CANCEL</v-btn>
-      <v-spacer></v-spacer>
-      <v-btn small  @click="closeEdit()" >CLOSE</v-btn>
-      <v-btn class="mr-4" small :disabled="!enableSave" @click="updateAttribute()" color="success">SAVE</v-btn>
-    </v-card-actions>
   </div>
+  <v-dialog
+    v-model="dialog"
+    :fullscreen="fullscreen"
+    max-width="500"
+    transition="dialog-bottom-transition"
+    scrollable>
+    <v-card>
+      <v-toolbar class="elevation-0 white--text" color="primary">
+        <v-toolbar-title>Edit Phone Numbers</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon @click.native="dialog = false" dark>
+          <v-icon>close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <v-card-text>
+        <v-text-field
+          v-model="phoneUpdate.mobile"
+          label="Mobile Number">
+        </v-text-field>
+        <v-text-field
+          v-model="phoneUpdate.business"
+          label="Business Number">
+        </v-text-field>
+        <v-text-field
+          v-model="phoneUpdate.home"
+          label="Home Number">
+        </v-text-field>
+      </v-card-text>
+      <div>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="mx-3 mb-2" @click="cancelEdit()">CANCEL</v-btn>
+          <v-btn class="mx-3 mb-2" :disabled="!enableSave" @click="updateAttribute()" color="success">SAVE</v-btn>
+        </v-card-actions>
+      </div>
+    </v-card>
+  </v-dialog>
 </div>
 </template>
 
@@ -66,26 +83,32 @@ export default {
   },
   data: function () {
     return {
+      dialog: false,
       phoneUpdate: {
         mobile: '',
         business: '',
         home: ''
       },
-      showEditView: false,
+      fullscreen: true,
       enableSave: false
     }
   },
   methods: {
     cancelEdit: function () {
       this.phoneUpdate = JSON.parse(JSON.stringify(this.phone))
-    },
-    closeEdit: function () {
-      this.cancelEdit()
-      this.showEditView = false
+      this.dialog = false
     },
     updateAttribute: function () {
       this.$emit('updatePhoneNumber', this.phoneUpdate)
       this.enableSave = false
+      this.dialog = false
+    },
+    setHeaders (param) {
+      if (param === 'xs') {
+        this.fullscreen = true
+      } else {
+        this.fullscreen = false
+      }
     }
   },
   computed: {
@@ -94,6 +117,9 @@ export default {
     },
     phoneNumberProp: function () {
       return this.phone.mobile + ' ' + this.phone.business + ' ' + this.phone.home
+    },
+    breakpoint () {
+      return this.$vuetify.breakpoint.name
     }
   },
   watch: {
@@ -108,19 +134,16 @@ export default {
     },
     phoneNumberProp: function () {
       this.phoneUpdate = JSON.parse(JSON.stringify(this.phone))
+    },
+    breakpoint () {
+      this.setHeaders(this.breakpoint)
     }
+  },
+  created () {
+    this.phoneUpdate = JSON.parse(JSON.stringify(this.phone))
+    this.setHeaders(this.breakpoint)
   }
 }
 </script>
 <style scoped>
-.tool {
-    position: relative;
-    padding: 0px;
-    margin: 0px;
-}
-.topright {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-}
 </style>

@@ -1,59 +1,64 @@
 <template>
   <v-container grid-list-md class="mt-3">
     <v-layout row wrap>
-      <v-flex xl12 lg12 md12 sm12 xs12>
-        <v-card class="elevation-0 transparent pa-4 ml-4 mr-4">
-          <v-layout row justify-center>
-            <v-flex xl4 lg4 md4 sm4 class="hidden-xs-only">
-              <v-card class="elevation-0 mr-2 transparent">
-                <div class="headline mb-2">User Profile</div>
-                <div class="body-1">Manage your basic information: your name, email, and phone number, etc. Help others find you and make it easier to get in touch.</div>
-                <!-- <v-btn small @click="getAttributes()">GET</v-btn> -->
-              </v-card>
+      <v-flex md12 sm12 xs12>
+        <v-card class="elevation-0 transparent pa-2 ma-0">
+          <v-layout row wrap justify-center>
+            <v-flex sm4 xs12>
+              <v-layout justify-center>
+                <div class="pa-4">
+                  <v-avatar color="primary" size="120">
+                    <img src="/static/avatar_placeholder.png" alt="avatar">
+                  </v-avatar>
+                </div>
+              </v-layout>
             </v-flex>
-            <v-flex xl8 lg8 md8 sm8>
+            <v-flex sm8 xs12>
               <v-card class="mb-2">
-                <v-toolbar dense class="elevation-1">
-                  <v-toolbar-title>Personal Details</v-toolbar-title>
-                </v-toolbar>
-                <app-user-name
-                  :name="userModel.name"
-                  @updateName="updateName($event)">
-                </app-user-name>
-                <v-divider></v-divider>
-                <app-user-email
-                  :email="userModel.emailAddress">
-                </app-user-email>
-                <v-divider></v-divider>
-                <app-birth-date
-                  :birthdate="userModel.birthDate"
-                  :caption="'Birth Date'"
-                  @updateBirthDate="updateBirthDate($event)">
-                </app-birth-date>
-                <v-divider></v-divider>
-                <app-phone-number
-                  :phone="userModel.phoneNumber"
-                  @updatePhoneNumber="updatePhone($event)">
-                </app-phone-number>
-                <v-divider></v-divider>
-                <app-address
-                  :address="userModel.homeAddress"
-                  :caption="'Home Address'"
-                  @updateAddress="updateAddress($event, 'home')">
-                </app-address>
-                <v-divider></v-divider>
-                <app-address
-                  :address="userModel.businessAddress"
-                  :caption="'Business Address'"
-                  @updateAddress="updateAddress($event, 'business')">
-                </app-address>
+                <v-list two-line>
+                  <app-user-name
+                    :name="userModel.name"
+                    @updateName="updateName($event)">
+                  </app-user-name>
+                  <v-divider></v-divider>
+                  <app-user-email
+                    :email="userModel.emailAddress">
+                  </app-user-email>
+                  <v-divider></v-divider>
+                  <app-birth-date
+                    :date="userModel.birthDate"
+                    :caption="'Birth Date'"
+                    @update="updateBirthDate($event)">
+                  </app-birth-date>
+                  <v-divider></v-divider>
+                </v-list>
+                <v-list>
+                  <app-phone-number
+                    :phone="userModel.phoneNumber"
+                    @updatePhoneNumber="updatePhone($event)">
+                  </app-phone-number>
+                  <v-divider></v-divider>
+                </v-list>
+                <v-list>
+                  <app-address
+                    :address="userModel.homeAddress"
+                    :caption="'Home Address'"
+                    @updateAddress="updateAddress($event, 'home')">
+                  </app-address>
+                  <v-divider></v-divider>
+                  <app-address
+                    :address="userModel.businessAddress"
+                    :caption="'Business Address'"
+                    @updateAddress="updateAddress($event, 'business')">
+                  </app-address>
+                </v-list>
               </v-card>
-              <v-card class="mb-2 mt-4">
-                <v-toolbar dense class="elevation-1">
+              <v-card class="mt-4">
+                <v-toolbar dense class="elevation-0 grey--text">
                   <v-toolbar-title>Custom Attributes</v-toolbar-title>
                   <v-spacer></v-spacer>
-                  <v-btn icon small dark color="indigo mr-4" @click="addCustomForm =! addCustomForm">
-                    <v-icon dark small>add</v-icon>
+                  <v-btn icon flat class="mr-3" @click="addCustomForm =! addCustomForm">
+                    <v-icon color="editicon">add</v-icon>
                   </v-btn>
                 </v-toolbar>
                 <template v-for="(item, index) in userModel.custom">
@@ -67,19 +72,14 @@
                   </app-custom>
                 </template>
               </v-card>
-              <v-dialog v-model="addCustomForm" max-width="500px">
-                <v-card>
-                <v-toolbar dense class="elevation-0">
-                  <v-toolbar-title>Add Custom Attribute</v-toolbar-title>
-                </v-toolbar>
-                 <app-custom
-                    :obj="{ prop1: '', prop2: '', prop3: '', prop4: '', prop5: '' }"
-                    :newEntry="true"
-                    @add="addCustom($event)"
-                    @close="addCustomForm =! addCustomForm"
-                    :caption="'Custom Attribute'">
-                  </app-custom>
-                </v-card>
+              <v-dialog v-if="addCustomForm" max-width="500px">
+                <app-custom
+                  :obj="{ prop1: '', prop2: '', prop3: '', prop4: '', prop5: '' }"
+                  :newEntry="true"
+                  @add="addCustom($event)"
+                  @close="addCustomForm =! addCustomForm"
+                  :caption="'Custom Attribute'">
+                </app-custom>
               </v-dialog>
             </v-flex>
           </v-layout>
@@ -92,7 +92,7 @@
 <script>
 import userName from './name.vue'
 import userEmail from './email.vue'
-import birthDate from './birthdate.vue'
+import birthDate from './datefield.vue'
 import phoneNumber from './phone.vue'
 import address from './address.vue'
 import custom from './custom.vue'
@@ -123,17 +123,23 @@ export default {
   },
   methods: {
     getAttributes: function () {
-      console.log('getting attributes from server...')
-      this.$store.state.cognitoUser.getUserAttributes((err, result) => {
-        if (err) {
-          console.log('get attribute error: ' + err)
-          return
-        }
+      if (this.$store.getters.getStateAttributes.length < 1) {
+        console.log('getting attributes from server...')
+        this.$store.state.auth.cognitoUser.getUserAttributes((err, result) => {
+          if (err) {
+            console.log('get attribute error: ' + err)
+          } else {
+            this.$store.commit('setAttributes', result)
+            this.mapAttributes(result)
+          }
+        })
+      } else {
+        console.log('getting attributes from central state...')
+        let result = this.$store.getters.getStateAttributes
         this.mapAttributes(result)
-      })
+      }
     },
     mapAttributes: function (result) {
-      console.log('mapping attributes...')
       for (let attribute of result) {
         if (attribute.Name === 'given_name') {
           this.userModel.name.first = attribute.Value
@@ -154,7 +160,6 @@ export default {
         } else if (attribute.Name === 'custom:custom_attribute') {
           this.userModel.custom = JSON.parse(attribute.Value)
         }
-        console.log('property:' + attribute.Name + ' value:' + attribute.Value)
       }
     },
     updateName: function (name) {
@@ -169,7 +174,7 @@ export default {
       attributeList.push(firstName)
       attributeList.push(middleName)
       attributeList.push(lastName)
-      this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
+      this.$store.state.auth.cognitoUser.updateAttributes(attributeList, (err, result) => {
         if (err) {
           console.log('error: ' + err)
           return
@@ -187,7 +192,7 @@ export default {
       let birthDate = new AmazonCognitoIdentity.CognitoUserAttribute(attributeBirthDate)
       console.log(birthDate)
       attributeList.push(birthDate)
-      this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
+      this.$store.state.auth.cognitoUser.updateAttributes(attributeList, (err, result) => {
         if (err) {
           console.log('error: ' + err)
           return
@@ -204,7 +209,7 @@ export default {
       var attributePhoneNumber = { Name: 'custom:phone_numbers', Value: phoneNumbers }
       var phoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(attributePhoneNumber)
       attributeList.push(phoneNumber)
-      this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
+      this.$store.state.auth.cognitoUser.updateAttributes(attributeList, (err, result) => {
         if (err) {
           console.log('error: ' + JSON.stringify(err))
           return
@@ -227,7 +232,7 @@ export default {
       var attributeAddress = { Name: 'custom:' + type + '_address', Value: addressJSON }
       var address = new AmazonCognitoIdentity.CognitoUserAttribute(attributeAddress)
       attributeList.push(address)
-      this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
+      this.$store.state.auth.cognitoUser.updateAttributes(attributeList, (err, result) => {
         if (err) {
           console.log('error: ' + JSON.stringify(err))
           return
@@ -267,7 +272,7 @@ export default {
       let attribute = { Name: 'custom:custom_attribute', Value: JSON.stringify(customAttribute) }
       var newAttribute = new AmazonCognitoIdentity.CognitoUserAttribute(attribute)
       attributeList.push(newAttribute)
-      this.$store.state.cognitoUser.updateAttributes(attributeList, (err, result) => {
+      this.$store.state.auth.cognitoUser.updateAttributes(attributeList, (err, result) => {
         if (err) {
           console.log('error: ' + JSON.stringify(err))
           return
@@ -280,21 +285,11 @@ export default {
     }
   },
   beforeMount: function () {
-    if (this.$store.state.authenticated === true) {
+    if (this.$store.state.auth.authenticated === true) {
       this.getAttributes()
     }
   }
 }
 </script>
 <style scoped>
-.tool {
-    position: relative;
-    padding: 0px;
-    margin: 0px;
-}
-.topright {
-    position: absolute;
-    top: 0px;
-    right: 10px;
-}
 </style>

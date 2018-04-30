@@ -6,27 +6,28 @@ import router from './routes'
 import Vuetify from 'vuetify'
 import AppLayout from './components/Layout.vue'
 import AppHome from './components/Home.vue'
-import AppSignin from './components/Signin.vue'
-import AppRegister from './components/Register.vue'
-import AppRegistered from './components/Registered.vue'
-import AppForgot from './components/Forgot.vue'
-import AppConfirm from './components/Confirm.vue'
-import AppChanged from './components/Changed.vue'
-import AppProfile from './components/Profile/Index.vue'
-import { store } from './store/store'
-
-// index.js or main.js
-import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
+import AppSignin from './components/Auth/Signin.vue'
+import AppRegister from './components/Auth/Register.vue'
+import { store } from './store/index'
+import colors from 'vuetify/es5/util/colors'
+import 'vuetify/dist/vuetify.min.css'
 
 Vue.use(Vuetify, {
   theme: {
-    primary: '#512DA8',
-    secondary: '#D1C4E9',
-    accent: '#FFC107',
-    error: '#f44336',
-    info: '#2196F3',
-    success: '#4CAF50',
-    warning: '#FFC107'
+    primary: colors.yellow.darken1,
+    primarydark: colors.yellow.darken4,
+    primarylight: colors.yellow.lighten5,
+    accent: colors.yellow.accent4,
+    primarytext: colors.grey.darken4,
+    secondarytext: colors.grey.darken1,
+    divider: colors.grey.lighten1,
+    secondary: colors.yellow.lighten5,
+    submit: colors.yellow.darken1,
+    editicon: colors.grey.lighten2,
+    error: colors.red.base,
+    info: colors.blue.base,
+    success: colors.green.base,
+    warning: colors.orange.base
   }
 })
 
@@ -36,11 +37,6 @@ Vue.component('app-layout', AppLayout)
 Vue.component('app-home', AppHome)
 Vue.component('app-signin', AppSignin)
 Vue.component('app-register', AppRegister)
-Vue.component('app-registered', AppRegistered)
-Vue.component('app-forgot', AppForgot)
-Vue.component('app-confirm', AppConfirm)
-Vue.component('app-changed', AppChanged)
-Vue.component('app-profile', AppProfile)
 
 /* eslint-disable no-new */
 new Vue({

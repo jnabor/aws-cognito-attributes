@@ -62,9 +62,6 @@
       fixed clipped-left app>
       <v-toolbar-side-icon v-if="isAuthenticated" class="white--text" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-spacer></v-spacer>
-      <v-btn v-if="isAuthenticated" icon @click="navigate('dash-election')">
-        <v-icon class="white--text">fingerprint</v-icon>
-      </v-btn>
       <v-btn icon @click="navigate('home')">
         <v-icon class="white--text">home</v-icon>
       </v-btn>

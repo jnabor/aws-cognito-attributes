@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     navSignIn: function () {
-      router.push('/auth-signin')
+      router.push('/signin')
     }
   }
 }

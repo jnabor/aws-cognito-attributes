@@ -48,7 +48,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="mx-3 mb-2" @click="cancelChange()">CANCEL</v-btn>
-          <v-btn class="mx-3 mb-2" @click="changePassword()" color="success">Change Password</v-btn>
+          <v-btn class="mx-3 mb-2" :disabled="!valid" @click="changePassword()" color="success">Change Password</v-btn>
         </v-card-actions>
       </div>
     </v-card>

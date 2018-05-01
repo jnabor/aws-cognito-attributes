@@ -114,7 +114,7 @@
     <v-footer fixed app>
       <v-layout column align-center justify-center>
         <div class="ml-3">
-          <span>&copy; 2018 <a href="https://www.sonabstudios.com">SonabStudios&trade;</a> Jayson Nabor&trade;</span>
+          <span>&copy; 2018 <a href="https://www.sonabstudios.com">SonabStudios&trade;</a></span>
         </div>
       </v-layout>
     </v-footer>

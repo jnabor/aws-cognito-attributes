@@ -45,7 +45,7 @@
         </v-card-text>
         <v-card-actions class="ml-2 mb-2">
           <v-btn flat small color="accent" :to="'/signin'">Sign In</v-btn>
-          <v-btn flat small :to="'/resend'">Confirm Registration</v-btn>
+          <v-btn flat small :to="'/resend'">Re-send Confirmation</v-btn>
         </v-card-actions>
       </v-card>
     </transition>

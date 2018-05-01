@@ -14,7 +14,7 @@
         <v-card-text>
           <v-alert outline type="error" dismissible class="mb-4 mt-0" v-model="showerr">
             {{ errmsg }}
-            <v-btn v-if="resend" color="primary" flat small :to="'/resend'">Confirm Registration</v-btn>
+            <v-btn v-if="resend" color="primary" flat small :to="'/resend'">Re-send Confirmation</v-btn>
           </v-alert>
           <v-form v-model="valid">
             <v-text-field
@@ -123,6 +123,7 @@ export default {
         } else if (this.errcode === '"UserNotFoundException"') {
           this.errmsg = 'User not found'
         } else if (this.errcode === '"UserNotConfirmedException"') {
+          this.$store.commit('setUsername', this.email)
           this.resend = true
           this.errmsg = 'User registration not confirmed'
         } else if (this.errcode === '"LimitExceededException"') {

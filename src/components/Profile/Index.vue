@@ -4,16 +4,30 @@
       <v-flex md12 sm12 xs12>
         <v-card class="elevation-0 transparent pa-2 ma-0">
           <v-layout row wrap justify-center>
-            <v-flex sm4 xs12>
+            <v-flex xl2 lg3 md4 sm4 xs12>
               <v-layout justify-center>
-                <div class="pa-4">
-                  <v-avatar color="primary" size="120">
-                    <img src="/static/avatar_placeholder.png" alt="avatar">
-                  </v-avatar>
-                </div>
+                <v-flex xs3>
+                  <v-btn v-show="false" icon @click.native="imgdialog = false">
+                    <v-icon color="editicon">edit</v-icon>
+                  </v-btn>
+                </v-flex>
+                <v-flex xs6>
+                  <v-card class="transparent elevation-0">
+                    <div class="text-xs-center mb-3">
+                      <v-avatar color="primary" size="120">
+                        <img src="/static/avatar_placeholder.png" alt="avatar">
+                      </v-avatar>
+                    </div>
+                  </v-card>
+                </v-flex>
+                <v-flex xs3>
+                  <v-btn icon @click.native="imgdialog = false">
+                    <v-icon color="editicon">edit</v-icon>
+                  </v-btn>
+                </v-flex>
               </v-layout>
             </v-flex>
-            <v-flex sm8 xs12>
+            <v-flex xl5 lg6 md8 sm8 xs12>
               <v-card class="mb-2">
                 <v-list two-line>
                   <app-user-name
@@ -81,6 +95,9 @@
                   :caption="'Custom Attribute'">
                 </app-custom>
               </v-dialog>
+              <v-btn small class="mt-4 elevation-0 grey--text">
+                Change Password
+              </v-btn>
             </v-flex>
           </v-layout>
         </v-card>

@@ -14,7 +14,7 @@ http://sonabstudios.com/
 1. Sign Up
    - [x] register with email and password
    - [x] Confirmation code sent to email
-   - [ ] Resend confirmation code to email -- ongoing development for v1.1
+   - [x] Resend confirmation code to email -- added for v1.1
    - [x] Confirmation code verification
    - [ ] Custom workflow (via lambda)
    - [ ] SMS verification option
@@ -26,7 +26,8 @@ http://sonabstudios.com/
 3. Sign Out
    - [x] invalidate session
 4. Password Update
-   - [x] reset or change password
+   - [x] Forgot password
+   - [ ] Change password -- ongoing development for v1.1
 5. Attributes (User Profile)
    - [x] default: name, email, phone, etc.
    - [x] custom: custom addresses, personal information, etc.
@@ -37,7 +38,7 @@ http://sonabstudios.com/
 7. User Pool
    - [ ] Administrators
    - [ ] User Management -- ongoing development for v1.1
-   - [ ] User Groups
+   - [ ] User Groups  -- ongoing development for v1.1
    - [ ] User Migration
 
 

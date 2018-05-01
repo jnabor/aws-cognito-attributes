@@ -95,9 +95,13 @@
                   :caption="'Custom Attribute'">
                 </app-custom>
               </v-dialog>
-              <v-btn small class="mt-4 elevation-0 grey--text">
+              <v-btn small class="mt-4 elevation-0 grey--text" @click.native="pwdialog = !pwdialog">
                 Change Password
               </v-btn>
+              <app-chpw
+                :dialog="pwdialog"
+                @close="pwdialog = !pwdialog">
+              </app-chpw>
             </v-flex>
           </v-layout>
         </v-card>
@@ -113,6 +117,7 @@ import birthDate from './datefield.vue'
 import phoneNumber from './phone.vue'
 import address from './address.vue'
 import custom from './custom.vue'
+import chpw from './chpw.vue'
 var AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 
 export default {
@@ -122,7 +127,8 @@ export default {
     'app-birth-date': birthDate,
     'app-phone-number': phoneNumber,
     'app-address': address,
-    'app-custom': custom
+    'app-custom': custom,
+    'app-chpw': chpw
   },
   data: function () {
     return {
@@ -135,6 +141,7 @@ export default {
         businessAddress: { line: '', city: '', state: '', zipcode: '', country: '' },
         custom: []
       },
+      pwdialog: false,
       addCustomForm: false
     }
   },

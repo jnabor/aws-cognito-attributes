@@ -15,15 +15,16 @@
           <v-alert outline type="error" dismissible class="mb-4 mt-0" v-model="showerr">
             {{ errmsg }}
           </v-alert>
-          <v-alert outline type="success" dismissible class="mb-4 mt-0" v-model="codesent">
+          <v-alert outline type="success" dismissible class="mb-4 mt-0" v-model="showsent">
             A confirmation was code sent to your email.
           </v-alert>
           <div v-show="!codesent">
             <h4 class="subheading mb-2">Find your account</h4>
             <v-form  v-model="validemail">
               <v-text-field
+                autocomplete="username"
                 label="Enter E-mail"
-                v-model="email"
+                v-model="username"
                 :rules="emailRules"
                 required clearable>
               </v-text-field>
@@ -44,7 +45,7 @@
           </div>
           <div v-show="codesent">
             <h4 class="subheading mb-2 accent--text">Confirm password change</h4>
-            <v-form  v-model="validcode">
+            <v-form  v-model="validcode" ref="form">
               <v-text-field
                 label="Confirmation Code"
                 v-model="code"
@@ -52,12 +53,23 @@
                 required clearable>
               </v-text-field>
               <v-text-field
+                autocomplete="new-password"
                 label="New Password"
-                v-model="password"
+                v-model="newPassword"
                 :rules="passRules"
                 :append-icon="hidepw ? 'visibility' : 'visibility_off'"
                 :append-icon-cb="() => (hidepw = !hidepw)"
                 :type="hidepw ? 'password' : 'text'"
+                required>
+              </v-text-field>
+              <v-text-field
+                autocomplete="new-password"
+                label="Confirm New Password"
+                v-model="confirmPassword"
+                :rules="confirmRules"
+                :append-icon="hidepw1 ? 'visibility' : 'visibility_off'"
+                :append-icon-cb="() => (hidepw1 = !hidepw1)"
+                :type="hidepw1 ? 'password' : 'text'"
                 required>
               </v-text-field>
             </v-form>
@@ -92,35 +104,47 @@ export default {
     'app-wrapper': wrapper,
     'app-terms': terms
   },
-  data: () => {
+  data: function () {
     return {
       codesent: false,
       callback: false,
       showerr: false,
+      showsent: false,
       errcode: '',
       errmsg: '',
       validemail: false,
       validcode: false,
-      email: '',
+      username: '',
       emailRules: [
         (v) => !!v || 'E-mail is required',
         // eslint-disable-next-line
         (v) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
       ],
-      password: '',
+      emailRules1: [
+        (v) => !!v || 'E-mail is required',
+        // eslint-disable-next-line
+        (v) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
+      ],
+      newPassword: '',
+      confirmPassword: '',
       passRules: [
         (v) => !!v || 'Password is required',
-        (v) => v.length >= 8 || 'Password must be 8-20 characters',
+        (v) => !v || v.length >= 8 || 'Password must be 8-20 characters',
         (v) => /^(?=.*[0-9])/.test(v) || 'Password must contain at least 1 number',
         (v) => /^(?=.*[a-z])/.test(v) || 'Password must contain at least 1 lower case letter',
         (v) => /^(?=.*[A-Z])/.test(v) || 'Password must contain at least 1 upper case letter',
         (v) => /^(?=.*[!@#$%^&*"])/.test(v) || 'Password must contain at least 1 special character (!@#$%^&*")'
+      ],
+      confirmRules: [
+        (v) => !!v || 'Password is required',
+        (v) => v === this.confirmPassword || 'Password does not match'
       ],
       code: '',
       codeRules: [
         (v) => !!v || 'Code is required'
       ],
       hidepw: true,
+      hidepw1: true,
       loader: false,
       loading: false
     }
@@ -133,15 +157,16 @@ export default {
 
       userPool = new AmazonCognitoIdentity.CognitoUserPool(config.poolData)
       var userData = {
-        Username: this.email,
+        Username: this.username,
         Pool: userPool
       }
       console.log('password change for ' + userData.Username)
       var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData)
       this.showerr = false
+      this.showsent = false
       this.errcode = ''
 
-      cognitoUser.confirmPassword(this.code, this.password, {
+      cognitoUser.confirmPassword(this.code, this.newPassword, {
         onSuccess: (data) => {
           console.log('forgot password confirmed: ' + JSON.stringify(data))
           this[l] = false
@@ -164,7 +189,7 @@ export default {
 
       userPool = new AmazonCognitoIdentity.CognitoUserPool(config.poolData)
       var userData = {
-        Username: this.email,
+        Username: this.username,
         Pool: userPool
       }
       console.log('password forgot for ' + userData.Username)
@@ -189,6 +214,7 @@ export default {
           var result = JSON.stringify(data)
           console.log('Code sent to: ' + result)
           this.codesent = true
+          this.showsent = true
           this.valid = false
           this[l] = false
           this.loader = null

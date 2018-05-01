@@ -16,7 +16,7 @@
           <v-alert outline type="error" dismissible class="mb-4 mt-2" v-model="showerr">
             {{ errmsg }}
           </v-alert>
-          <v-form v-model="valid">
+          <v-form v-model="valid" ref="form">
             <v-text-field
               label="E-mail"
               v-model="email"

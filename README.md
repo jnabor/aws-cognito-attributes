@@ -40,6 +40,8 @@ http://sonabstudios.com/
    - [ ] User Management -- ongoing development for v1.1
    - [ ] User Groups  -- ongoing development for v1.1
    - [ ] User Migration
+   - [ ] Delete Account by User
+   - [ ] Delete Account by Admin
 
 
 ## Build Setup

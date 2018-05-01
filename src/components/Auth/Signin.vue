@@ -16,14 +16,16 @@
             {{ errmsg }}
             <v-btn v-if="resend" color="primary" flat small :to="'/resend'">Re-send Confirmation</v-btn>
           </v-alert>
-          <v-form v-model="valid">
+          <v-form v-model="valid" ref="form">
             <v-text-field
+              autocomplete="username"
               label="E-mail"
               v-model="email"
               :rules="[emailrules.required, emailrules.email]"
               required clearable>
             </v-text-field>
             <v-text-field
+              autocomplete="current-password"
               label="Password"
               v-model="password"
               :rules="passRules"
@@ -83,7 +85,7 @@ export default {
       password: '',
       passRules: [
         (v) => !!v || 'Password is required',
-        (v) => v.length >= 8 || 'Password must be at least 8 characters'
+        (v) => !v || v.length >= 8 || 'Password must be at least 8 characters'
       ],
       hidepw: true,
       loader: false,

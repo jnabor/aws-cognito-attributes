@@ -98,10 +98,10 @@
               <v-btn small class="mt-4 elevation-0 grey--text" @click.native="pwdialog = !pwdialog">
                 Change Password
               </v-btn>
-              <app-chpw
+              <app-chpwd
                 :dialog="pwdialog"
                 @close="pwdialog = !pwdialog">
-              </app-chpw>
+              </app-chpwd>
             </v-flex>
           </v-layout>
         </v-card>
@@ -117,7 +117,7 @@ import birthDate from './datefield.vue'
 import phoneNumber from './phone.vue'
 import address from './address.vue'
 import custom from './custom.vue'
-import chpw from './chpw.vue'
+import chpwd from './chpwd.vue'
 var AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 
 export default {
@@ -128,7 +128,7 @@ export default {
     'app-phone-number': phoneNumber,
     'app-address': address,
     'app-custom': custom,
-    'app-chpw': chpw
+    'app-chpwd': chpwd
   },
   data: function () {
     return {

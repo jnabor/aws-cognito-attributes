@@ -13,7 +13,13 @@
           <v-icon>close</v-icon>
         </v-btn>
       </v-toolbar>
-      <v-card-text>
+      <v-card-text class="px-4">
+        <v-alert outline type="error" dismissible class="mb-4 mt-0" v-model="showerr">
+          {{ errmsg }}
+        </v-alert>
+        <v-alert outline type="success" class="mb-4 mt-0" v-model="showchanged">
+          Password changed successfully
+        </v-alert>
         <v-form v-model="valid" ref="form">
             <v-text-field
               v-show="false"
@@ -48,13 +54,18 @@
             </v-text-field>
         </v-form>
       </v-card-text>
-      <div>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn class="mx-3 mb-2" @click="close()">CANCEL</v-btn>
-          <v-btn class="mx-3 mb-2" :disabled="!valid" @click="changePassword()" color="success">Change Password</v-btn>
-        </v-card-actions>
-      </div>
+      <v-card-actions class="px-4">
+        <v-btn
+          block
+          :loading="loading"
+          @click.native="onSubmit()"
+          :disabled="!valid"
+          class="mt-3 mb-3 white--text"
+          color="submit">
+          Change Password
+          <span slot="loader">Changing...</span>
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -66,6 +77,9 @@ export default {
   },
   data: function () {
     return {
+      showchanged: false,
+      showerr: false,
+      errmsg: '',
       oldPassword: '',
       newPassword1: '',
       newPassword2: '',
@@ -90,7 +104,9 @@ export default {
       pwdRules2: [
         (v) => !!v || 'Password is required',
         (v) => v === this.newPassword1 || 'Password does not match'
-      ]
+      ],
+      loader: false,
+      loading: false
     }
   },
   methods: {
@@ -98,8 +114,27 @@ export default {
       this.$emit('close')
       this.$refs.form.reset()
     },
-    changePassword: function () {
-      this.$emit('close')
+    onSubmit () {
+      this.loader = 'loading'
+      const l = this.loader
+      this[l] = !this[l]
+      this.showerr = false
+      this.showchanged = false
+
+      this.$store.state.auth.cognitoUser.changePassword(this.oldPassword, this.newPassword1, (err, result) => {
+        this[l] = false
+        this.loader = null
+        if (err) {
+          this.errmsg = err.message
+          this.showerr = true
+        } else {
+          this.showchanged = true
+          this.$refs.form.reset()
+          setTimeout(() => {
+            this.$emit('close')
+          }, 2000)
+        }
+      })
     },
     setHeaders (param) {
       if (param === 'xs') {
@@ -112,11 +147,6 @@ export default {
   watch: {
     breakpoint () {
       this.setHeaders(this.breakpoint)
-    },
-    dialog () {
-      if (!this.dialog) {
-
-      }
     }
   },
   created () {

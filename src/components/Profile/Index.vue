@@ -7,7 +7,7 @@
             <v-flex xl2 lg3 md4 sm4 xs12>
               <v-layout justify-center>
                 <v-flex xs3>
-                  <v-btn v-show="false" icon @click.native="imgdialog = false">
+                  <v-btn v-show="false" icon>
                     <v-icon color="editicon">edit</v-icon>
                   </v-btn>
                 </v-flex>
@@ -21,9 +21,13 @@
                   </v-card>
                 </v-flex>
                 <v-flex xs3>
-                  <v-btn icon @click.native="imgdialog = false">
+                  <v-btn icon @click.native="imgdialog = !imgdialog">
                     <v-icon color="editicon">edit</v-icon>
                   </v-btn>
+                  <app-image
+                    :dialog="imgdialog"
+                    @close="imgdialog = !imgdialog">
+                  </app-image>
                 </v-flex>
               </v-layout>
             </v-flex>
@@ -118,6 +122,7 @@ import phoneNumber from './phone.vue'
 import address from './address.vue'
 import custom from './custom.vue'
 import chpwd from './chpwd.vue'
+import image from './image.vue'
 var AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 
 export default {
@@ -128,7 +133,8 @@ export default {
     'app-phone-number': phoneNumber,
     'app-address': address,
     'app-custom': custom,
-    'app-chpwd': chpwd
+    'app-chpwd': chpwd,
+    'app-image': image
   },
   data: function () {
     return {
@@ -142,6 +148,7 @@ export default {
         custom: []
       },
       pwdialog: false,
+      imgdialog: true,
       addCustomForm: false
     }
   },

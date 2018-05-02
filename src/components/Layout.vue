@@ -80,6 +80,9 @@
       </v-menu>
       <v-menu  v-if="isAuthenticated" bottom left class="mr-4 hidden-xs-only">
         <v-btn depressed small color="primary" slot="activator">
+          <v-avatar size="24" class="pr-2">
+            <img src="/static/avatar_placeholder.png">
+          </v-avatar>
           {{ username }}
           <v-icon class="white--text">arrow_drop_down</v-icon>
         </v-btn>

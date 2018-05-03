@@ -1,8 +1,8 @@
 <template>
   <v-dialog
-    v-model="dialog"
+    v-model="show"
     :fullscreen="fullscreen"
-    max-width="600"
+    max-width="400"
     transition="dialog-bottom-transition"
     scrollable>
     <v-card>
@@ -13,42 +13,39 @@
           <v-icon>close</v-icon>
         </v-btn>
       </v-toolbar>
+      <v-card-media>
+      </v-card-media>
       <v-card-text class="px-4">
         <v-alert outline type="error" dismissible class="mb-4 mt-0" v-model="showerr">
           {{ errmsg }}
         </v-alert>
-        <app-imginput v-model="filename" @formData="formData"></app-imginput>
+        <input style="display: none" type="file" @change="onFileSelected" ref="fileInput">
+         <v-text-field
+            v-model="fileName"
+            prepend-icon="add_a_photo"
+            label="Select Image"
+            autofocus
+            @click="$refs.fileInput.click()"
+            single-line readonly>
+          </v-text-field>
       </v-card-text>
-      <v-card-actions class="px-4">
-        <v-btn
-          block
-          :loading="loading"
-          @click.native="onSubmit()"
-          :disabled="!valid"
-          class="mt-3 mb-3 white--text"
-          color="submit">
-          Upload
-          <span slot="loader">Uploading...</span>
-        </v-btn>
+      <v-card-actions class="px-4 pb-3">
+        <v-btn @click="onUpload">Upload</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-import fileInput from './imginput.vue'
-
 export default {
   props: {
     dialog: Boolean
   },
-  components: {
-    'app-imginput': fileInput
-  },
   data: function () {
     return {
-      formData: '',
-      filename: '',
+      show: false,
+      selectedFile: null,
+      fileName: '',
       showerr: false,
       errmsg: '',
       fullscreen: true,
@@ -58,10 +55,12 @@ export default {
     }
   },
   methods: {
-    uploadFiles () {
-      // your custom upload method
-      const form = this.formData
-      console.log(form)
+    onFileSelected (event) {
+      this.selectedFile = event.target.files[0]
+      this.fileName = this.selectedFile.name
+    },
+    onUpload () {
+
     },
     close: function () {
       this.$emit('close')
@@ -75,6 +74,9 @@ export default {
     }
   },
   watch: {
+    dialog () {
+      this.show = this.dialog
+    },
     breakpoint () {
       this.setHeaders(this.breakpoint)
     }

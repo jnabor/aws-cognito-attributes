@@ -148,7 +148,7 @@ export default {
         custom: []
       },
       pwdialog: false,
-      imgdialog: true,
+      imgdialog: false,
       addCustomForm: false
     }
   },

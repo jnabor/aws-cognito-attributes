@@ -15,14 +15,16 @@
           <v-alert outline type="error" dismissible class="mb-4 mt-0" v-model="showerr">
             {{ errmsg }}
           </v-alert>
-          <v-form v-model="valid">
+          <v-form v-model="valid" ref="form">
             <v-text-field
+              autocomplete="username"
               label="E-mail"
               v-model="email"
               :rules="[emailrules.required, emailrules.email]"
               required clearable>
             </v-text-field>
             <v-text-field
+              autocomplete="new-password"
               label="Password"
               v-model="password"
               :rules="passRules"
@@ -91,7 +93,7 @@ export default {
       password: '',
       passRules: [
         (v) => !!v || 'Password is required',
-        (v) => v.length >= 8 || 'Password must be 8-20 characters',
+        (v) => !v || v.length >= 8 || 'Password must be 8-20 characters',
         (v) => /^(?=.*[0-9])/.test(v) || 'Password must contain at least 1 number',
         (v) => /^(?=.*[a-z])/.test(v) || 'Password must contain at least 1 lower case letter',
         (v) => /^(?=.*[A-Z])/.test(v) || 'Password must contain at least 1 upper case letter',

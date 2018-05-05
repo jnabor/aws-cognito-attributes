@@ -14,7 +14,7 @@
                 <v-flex xs6>
                   <v-card class="transparent elevation-0">
                     <div class="text-xs-center mb-3">
-                      <v-avatar color="primary" size="120">
+                      <v-avatar size="120" class="elevation-2">
                         <img src="/static/avatar_placeholder.png" alt="avatar">
                       </v-avatar>
                     </div>
@@ -26,7 +26,7 @@
                   </v-btn>
                   <app-image
                     :dialog="imgdialog"
-                    @close="imgdialog = !imgdialog">
+                    @close="closeImage">
                   </app-image>
                 </v-flex>
               </v-layout>
@@ -153,6 +153,10 @@ export default {
     }
   },
   methods: {
+    closeImage: function () {
+      console.log('closing image dialog')
+      this.imgdialog = false
+    },
     getAttributes: function () {
       if (this.$store.getters.getStateAttributes.length < 1) {
         console.log('getting attributes from server...')

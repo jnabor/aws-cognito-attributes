@@ -6,7 +6,12 @@ const state = {
   userPool: [],
   authDetails: '',
   userData: '',
-  cognitoUser: '',
+  cognitoUser: null,
+  tokens: {
+    accessToken: '',
+    idToken: '',
+    refreshToken: ''
+  },
   username: '',
   errcode: '',
   attributes: [],
@@ -22,6 +27,7 @@ const getters = {
 const mutations = {
   signOut (state) {
     state.cognitoUser.signOut()
+    state.sessionToken = null
     state.authenticated = false
     state.username = ''
     state.userPool = []
@@ -40,6 +46,12 @@ const mutations = {
   },
   setUserPool (state) {
     state.userPool = new AmazonCognitoIdentity.CognitoUserPool(config.poolData)
+  },
+  setTokens (state, payload) {
+    console.log(payload)
+    state.tokens.accessToken = payload.getAccessToken().getJwtToken()
+    state.tokens.idToken = payload.getIdToken().getJwtToken()
+    state.tokens.refreshToken = payload.getRefreshToken().getToken()
   },
   setCognitoUser (state, payload) {
     state.cognitoUser = payload
@@ -65,6 +77,7 @@ const actions = {
     state.cognitoUser.authenticateUser(state.authDetails, {
       onSuccess: (result) => {
         console.log('sign in success')
+        commit('setTokens', result)
         commit('signIn')
         router.push('/profile')
         dispatch('getUserAttributes')
@@ -85,6 +98,7 @@ const actions = {
         if (err) {
           console.error(JSON.stringify(err))
         } else {
+          commit('setTokens', session)
           commit('signIn')
           dispatch('getUserAttributes')
           dispatch('setLogoutTimer', 3600)

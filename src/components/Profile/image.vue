@@ -107,20 +107,7 @@
 <script>
 'use strict'
 import config from '../../config'
-const AWS = require('aws-sdk')
-
-AWS.config.update({
-  region: config.bucketRegion,
-  credentials: new AWS.CognitoIdentityCredentials({
-    RoleArn: 'arn:aws:iam::815621908682:role/Cognito_AuthCognitoAttributesAuth_Role',
-    IdentityPoolId: config.identityPoolId
-  })
-})
-
-var s3 = new AWS.S3({
-  apiVersion: '2006-03-01',
-  params: { Bucket: config.bucketName }
-})
+import AWS from 'aws-sdk'
 
 export default {
   props: {
@@ -139,7 +126,11 @@ export default {
       fullScreen: true,
       valid: false,
       loader: false,
-      maxSize: 102400
+      maxSize: 102400,
+      s3: new AWS.S3({
+        apiVersion: '2006-03-01',
+        params: { Bucket: config.bucketName }
+      })
     }
   },
   methods: {
@@ -201,6 +192,7 @@ export default {
       reader.readAsDataURL(file)
     },
     onUpload () {
+      this.configUpdate()
       let ext = ''
       if (~this.fileName.indexOf('.jpg')) {
         ext = '.jpg'
@@ -221,11 +213,11 @@ export default {
         Key: fileName,
         Body: this.sourceImgUrl
       }
-      s3.upload(params, function (err, data) {
+      this.s3.upload(params, function (err, data) {
         if (err) {
           console.error(err.message)
         } else {
-          console.error('Successfully uploaded photo.')
+          console.log('Successfully uploaded photo.')
         }
       })
       // this.$emit('close')
@@ -241,6 +233,24 @@ export default {
       } else {
         this.fullScreen = false
       }
+    },
+    configUpdate () {
+      const idToken = this.$store.state.auth.tokens.idToken
+      console.log('config update')
+      console.log(idToken)
+      console.log(this.$store.state.auth.username)
+      let credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: config.identityPoolId,
+        RoleArn: 'arn:aws:iam::815621908682:role/Cognito_AuthCognitoAttributesAuth_Role',
+        Logins: {
+          'cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_LBZf5wb16': idToken
+        },
+        LoginId: this.$store.state.auth.username
+      })
+      AWS.config.update({
+        region: config.bucketRegion,
+        credentials: credentials
+      })
     }
   },
   computed: {

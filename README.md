@@ -7,7 +7,7 @@
 ### Live Demo:
 http://auth-cognito-attributes.s3-website-ap-southeast-1.amazonaws.com
 
-email me know if you have some questions:
+let me know if you have some questions:
 http://sonabstudios.com/
 
 ### Features

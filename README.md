@@ -48,6 +48,12 @@ const poolData = { UserPoolId: <UserPoolId>, ClientId: <ClientId> }
 export default {
   poolData
 }
+  
+Getting your UserPoolId and ClientId
+1. Login to AWS console then go to Congnito
+2. Select your user pool or create a new one
+In "General Settings" you can find the following: Pool Id and Pool ARN
+In "App Clients" you can find the following; App Client Id
 
 ``` bash
 # install dependencies

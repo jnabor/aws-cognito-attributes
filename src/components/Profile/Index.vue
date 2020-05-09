@@ -115,8 +115,8 @@
 </template>
 
 <script>
-import userName from './name.vue'
-import userEmail from './email.vue'
+import userName from '../profile/Name.vue'
+import userEmail from '../profile/email.vue'
 import birthDate from './datefield.vue'
 import phoneNumber from './phone.vue'
 import address from './address.vue'
